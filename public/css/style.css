@@ -229,22 +229,27 @@
         .header-inner{
             width:min(1220px, 92%);
             margin:0 auto;
-            padding:14px 0 12px;
+            padding:8px 0 8px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:18px;
+            flex-wrap:wrap;
         }
         .logo-wrap{
             display:flex;
-            justify-content:center;
+            justify-content:flex-start;
             align-items:center;
-            gap:14px;
-            margin-bottom:10px;
+            gap:12px;
+            margin-bottom:0;
         }
         .logo{
-            max-width:240px;
-            max-height:76px;
+            max-width:180px;
+            max-height:52px;
             width:auto;
             height:auto;
             object-fit:contain;
-            filter:drop-shadow(0 0 16px rgba(69,185,255,.16));
+            filter:drop-shadow(0 0 12px rgba(69,185,255,.14));
         }
         .brand-fallback{
             display:none;
@@ -259,17 +264,19 @@
 
         nav{
             display:flex;
-            justify-content:center;
-            gap:10px;
+            justify-content:flex-end;
+            align-items:center;
+            gap:6px;
             flex-wrap:wrap;
         }
         nav a{
             text-decoration:none;
-            padding:10px 16px;
+            padding:8px 14px;
             border-radius:999px;
             border:1px solid transparent;
             color:#d9e8f6;
             transition:.25s;
+            font-size:14px;
         }
         nav a:hover{
             color:#fff;
@@ -2182,7 +2189,6 @@ body.product-embed .item{
 @keyframes headlight-breathe{0%{transform:scale(.985);opacity:.24}50%{transform:scale(1.04);opacity:.42}100%{transform:scale(.99);opacity:.26}}
 @media (max-width: 640px){.logo{max-width:280px;max-height:102px}.headlight-core{min-width:22px;min-height:9px;filter:blur(2px)}.headlight-glow{min-width:40px;min-height:16px;filter:blur(7px)}.headlight-beam{min-width:72px;min-height:12px;filter:blur(9px)}}
 @media (prefers-reduced-motion: reduce){.headlight-core,.headlight-glow,.headlight-beam,.headlight-core::after,.headlight-glow::after{animation:none !important;opacity:0}}
-        }
 
 
 .catalog-dynamic-placeholder,
