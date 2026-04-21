@@ -1131,17 +1131,26 @@
         }
         .write-modal.open{display:flex}
         .write-modal-box{
-            width:min(560px, 96vw);
-            padding:24px;
-            border-radius:28px;
+            width:min(540px, 96vw);
+            max-height:92vh;
+            overflow-y:auto;
+            overscroll-behavior:contain;
+            padding:20px;
+            border-radius:24px;
             border:1px solid rgba(255,255,255,.08);
             background:
                 linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.018)),
                 #0d141c;
             box-shadow:0 32px 80px rgba(0,0,0,.55);
             position:relative;
-            overflow:hidden;
+            scrollbar-width:thin;
+            scrollbar-color:rgba(130,216,255,.35) transparent;
         }
+        .write-modal-box::-webkit-scrollbar{width:6px}
+        .write-modal-box::-webkit-scrollbar-track{background:transparent}
+        .write-modal-box::-webkit-scrollbar-thumb{background:rgba(130,216,255,.28);border-radius:8px}
+        .write-modal-box::-webkit-scrollbar-thumb:hover{background:rgba(130,216,255,.5)}
+        body.light-theme .write-modal-box::-webkit-scrollbar-thumb{background:rgba(44,143,217,.35)}
         .write-modal-box::before{
             content:"";
             position:absolute;
@@ -1154,18 +1163,19 @@
             pointer-events:none;
         }
         .write-close{
-            position:absolute;
-            top:16px;
-            right:16px;
-            width:42px;
-            height:42px;
+            position:sticky;
+            top:0;
+            float:right;
+            margin:-4px -4px 0 0;
+            width:38px;
+            height:38px;
             border-radius:50%;
             border:1px solid rgba(255,255,255,.14);
             background:rgba(9,13,19,.72);
             color:#fff;
-            font-size:24px;
+            font-size:22px;
             cursor:pointer;
-            z-index:2;
+            z-index:5;
             transition:.2s;
         }
         .write-close:hover{
@@ -1175,34 +1185,36 @@
         .write-head{
             position:relative;
             z-index:1;
-            margin-bottom:18px;
+            margin-bottom:14px;
             padding-right:42px;
         }
         .write-head .eyebrow{
-            margin-bottom:12px;
+            margin-bottom:10px;
         }
         .write-head h3{
-            margin:0 0 8px;
-            font-size:28px;
+            margin:0 0 6px;
+            font-size:22px;
         }
         .write-head p{
             margin:0;
             color:var(--muted);
-            line-height:1.6;
+            line-height:1.5;
+            font-size:13px;
         }
         .write-options{
             position:relative;
             z-index:1;
             display:grid;
-            gap:12px;
+            gap:8px;
         }
         .write-option{
             display:flex;
             align-items:center;
             justify-content:space-between;
-            gap:14px;
-            padding:16px 18px;
-            border-radius:18px;
+            gap:12px;
+            padding:10px 14px;
+            min-height:56px;
+            border-radius:14px;
             text-decoration:none;
             border:1px solid rgba(255,255,255,.08);
             background:rgba(255,255,255,.03);
@@ -1216,35 +1228,39 @@
         .write-option-main{
             display:flex;
             align-items:center;
-            gap:14px;
+            gap:12px;
             min-width:0;
         }
         .write-option-icon{
-            width:48px;
-            height:48px;
-            border-radius:16px;
+            width:36px;
+            height:36px;
+            border-radius:12px;
             display:grid;
             place-items:center;
-            font-size:22px;
+            font-size:18px;
             flex-shrink:0;
             border:1px solid rgba(255,255,255,.08);
             background:linear-gradient(180deg, rgba(69,185,255,.16), rgba(216,179,106,.10));
         }
         .write-option strong{
             display:block;
-            margin-bottom:4px;
+            margin-bottom:2px;
             color:#fff;
-            font-size:17px;
+            font-size:15px;
+            line-height:1.2;
         }
         .write-option small{
             display:block;
             color:#bfcede;
-            font-size:13px;
-            line-height:1.5;
+            font-size:12px;
+            line-height:1.3;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
         }
         .write-option-arrow{
             color:#9cc7e4;
-            font-size:24px;
+            font-size:22px;
             flex-shrink:0;
         }
 
@@ -2542,17 +2558,17 @@ main:not(.catalog) .gallery-stage{
 
 /* --- Callback form inside #writeModal --- */
 .callback-form {
-  margin: 18px 0 6px;
-  padding: 18px;
-  border-radius: 18px;
+  margin: 12px 0 4px;
+  padding: 14px;
+  border-radius: 16px;
   background: linear-gradient(135deg, rgba(69,185,255,.08), rgba(69,185,255,.02));
   border: 1px solid rgba(69,185,255,.18);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 .callback-form .cb-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: #e8f3ff;
   display: flex;
@@ -2561,20 +2577,20 @@ main:not(.catalog) .gallery-stage{
 }
 .callback-form .cb-title::before {
   content: "📞";
-  font-size: 18px;
+  font-size: 16px;
 }
 .callback-form .cb-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 8px;
 }
 @media (max-width: 540px) {
   .callback-form .cb-row { grid-template-columns: 1fr; }
 }
 .callback-form input {
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
   background: rgba(11,16,23,.55);
   border: 1px solid rgba(255,255,255,.08);
   color: #eaf2ff;
@@ -2596,8 +2612,8 @@ main:not(.catalog) .gallery-stage{
 .callback-form .cb-submit {
   position: relative;
   overflow: hidden;
-  padding: 13px 18px;
-  border-radius: 12px;
+  padding: 11px 16px;
+  border-radius: 10px;
   background: linear-gradient(135deg, #45b9ff, #2c8fd9);
   color: #06121e;
   font-weight: 700;
