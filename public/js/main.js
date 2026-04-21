@@ -636,34 +636,24 @@ ${images}
       cleanup();
       window.setTimeout(() => {
         splash.remove();
-      }, immediate ? 260 : 1500);
+      }, immediate ? 260 : 1750);
     };
 
     const skipNow = () => closeSplash(true);
 
     splash.addEventListener('pointerdown', skipNow, { passive: true });
     splash.addEventListener('touchstart', skipNow, { passive: true });
+    splash.addEventListener('click', skipNow, { passive: true });
     document.addEventListener('keydown', skipNow);
+    window.addEventListener('wheel', skipNow, { passive: true, once: true });
 
+    // Логотип проявляется из тумана сразу после первого кадра
     enterTimer = window.setTimeout(() => {
       splash.classList.add('is-entered');
-    }, 80);
+    }, 120);
 
-    // Закрываем по окончании видео — выглядит плавно и завершённо
-    const video = splash.querySelector('.intro-splash__video');
-    let maxWait = 5200; // запасной таймаут
-    if (video) {
-      video.addEventListener('ended', () => closeSplash(false), { once: true });
-      video.addEventListener('loadedmetadata', () => {
-        if (isFinite(video.duration) && video.duration > 0) {
-          maxWait = Math.min(Math.round(video.duration * 1000) + 400, 9000);
-        }
-      }, { once: true });
-      // Подстраховка: если видео не загрузится
-      const tryPlay = video.play();
-      if (tryPlay && typeof tryPlay.catch === 'function') tryPlay.catch(() => {});
-    }
-    autoTimer = window.setTimeout(() => closeSplash(false), maxWait);
+    // Хореография: 0.12s ожидание → ~1.8s проявление → ~1.4s удержание → ~1.7s растворение
+    autoTimer = window.setTimeout(() => closeSplash(false), 3400);
   };
 
 
