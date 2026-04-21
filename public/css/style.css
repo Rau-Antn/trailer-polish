@@ -2271,4 +2271,18 @@ img{ -webkit-user-drag:none; }
 .product-card:hover img{ transform:scale(1.04); }
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{ animation-duration:.001s !important; transition-duration:.001s !important; }
+  .intro-splash__fog,
+  .intro-splash::before,
+  .intro-splash::after{ display:none !important; }
+  .intro-splash{ background:#0b1017 !important; }
+  .intro-splash__logo{ filter:none !important; transform:none !important; opacity:1 !important; }
+  .product-card:hover img{ transform:none !important; }
+}
+
+/* Compact header on small screens */
+@media (max-width: 720px){
+  .header-inner{ padding:6px 0; gap:8px; }
+  .logo{ max-width:140px; max-height:42px; }
+  nav{ width:100%; justify-content:center; gap:4px; }
+  nav a{ padding:6px 10px; font-size:13px; }
 }
