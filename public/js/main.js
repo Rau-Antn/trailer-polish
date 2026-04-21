@@ -1106,6 +1106,9 @@ ${images}
   const observer = new MutationObserver(() => {
     initRipple(document);
     initTilt(document);
+    initShareButton(document);
+    initBlurUp(document);
+    initCallbackForm();
   });
   observer.observe(document.body, { childList: true, subtree: true });
 })();
