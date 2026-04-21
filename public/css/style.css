@@ -2445,13 +2445,21 @@ body.light-theme .hero-cinematic h1{
 }
 
 /* Rounded photos + soft spotlight on photo only */
-.item .gallery-stage{
+.item .gallery,
+.gallery{
   border-radius:22px !important;
+  overflow:hidden;
+}
+.item .gallery-stage,
+.gallery-stage{
+  border-radius:18px !important;
   overflow:hidden;
   position:relative;
 }
-.item .gallery-stage img{
-  border-radius:18px;
+.item .gallery-stage img,
+.gallery-stage img,
+.gallery img{
+  border-radius:16px;
 }
 .item .gallery-stage::after{
   content:""; position:absolute; inset:0; pointer-events:none;
