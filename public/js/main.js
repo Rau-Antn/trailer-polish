@@ -1131,6 +1131,7 @@ ${images}
   initRipple(document);
   initTilt(document);
   initParallax();
+  initReveal(document);
 
   // Re-init ripple & tilt after catalog/product preview rendered dynamically
   const observer = new MutationObserver(() => {
@@ -1139,6 +1140,7 @@ ${images}
     initShareButton(document);
     initBlurUp(document);
     initCallbackForm();
+    initReveal(document);
   });
   observer.observe(document.body, { childList: true, subtree: true });
 })();
