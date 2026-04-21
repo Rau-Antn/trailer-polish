@@ -488,6 +488,24 @@ ${images}
       const productNode = sourceItem.cloneNode(true);
       productNode.classList.add('product-preview-item');
       absolutizeFragmentUrls(productNode, pageUrl);
+
+      // Гарантируем наличие CTA-кнопок (Позвонить / Написать) внутри карточки
+      const info = productNode.querySelector('.info');
+      if (info && !info.querySelector('.cta-row')) {
+        const ctaRow = document.createElement('div');
+        ctaRow.className = 'cta-row';
+        ctaRow.innerHTML = `
+          <button class="cta cta-call open-call-modal" type="button"><span>Позвонить</span></button>
+          <button class="cta cta-write open-write-modal" type="button"><span>Написать</span></button>
+        `;
+        const priceRow = info.querySelector('.price-row');
+        if (priceRow && priceRow.nextSibling) {
+          info.insertBefore(ctaRow, priceRow.nextSibling);
+        } else {
+          info.appendChild(ctaRow);
+        }
+      }
+
       wrapper.appendChild(productNode);
 
       const title = sourceItem.querySelector('h2')?.textContent?.trim()
