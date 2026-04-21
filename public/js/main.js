@@ -857,17 +857,247 @@ ${images}
     onScroll();
   };
 
+  // ===== Callback form (in #writeModal) =====
+  const initCallbackForm = () => {
+    const form = document.getElementById('callbackForm');
+    if (!form || form.dataset.cbReady === '1') return;
+    form.dataset.cbReady = '1';
+    const nameI = form.querySelector('[name="cb-name"]');
+    const phoneI = form.querySelector('[name="cb-phone"]');
+    const submit = form.querySelector('.cb-submit');
+    const toast = document.getElementById('copyToast');
+
+    const formatPhone = raw => {
+      let d = raw.replace(/\D/g, '');
+      if (d.startsWith('8')) d = '7' + d.slice(1);
+      if (!d.startsWith('7')) d = '7' + d;
+      d = d.slice(0, 11);
+      const p = d.slice(1);
+      let out = '+7';
+      if (p.length > 0) out += ' (' + p.slice(0, 3);
+      if (p.length >= 3) out += ') ' + p.slice(3, 6);
+      if (p.length >= 6) out += '-' + p.slice(6, 8);
+      if (p.length >= 8) out += '-' + p.slice(8, 10);
+      return out;
+    };
+    phoneI?.addEventListener('input', () => { phoneI.value = formatPhone(phoneI.value); });
+    phoneI?.addEventListener('focus', () => { if (!phoneI.value) phoneI.value = '+7 ('; });
+
+    const showToast = (text) => {
+      if (!toast) return;
+      toast.textContent = text;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2400);
+    };
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = (nameI?.value || '').trim();
+      const phoneDigits = (phoneI?.value || '').replace(/\D/g, '');
+      let valid = true;
+      if (name.length < 2 || name.length > 60) { nameI?.classList.add('cb-invalid'); valid = false; } else nameI?.classList.remove('cb-invalid');
+      if (phoneDigits.length !== 11) { phoneI?.classList.add('cb-invalid'); valid = false; } else phoneI?.classList.remove('cb-invalid');
+      if (!valid) { showToast('Проверьте имя и телефон'); return; }
+
+      const last = Number(localStorage.getItem('cb_last') || 0);
+      if (Date.now() - last < 60000) { showToast('Заявка уже отправлена. Перезвоним.'); return; }
+      localStorage.setItem('cb_last', String(Date.now()));
+
+      const msg = encodeURIComponent(`Заявка с сайта: ${name}, ${phoneI.value}`);
+      const wa = 'https://wa.me/79131474624?text=' + msg;
+      window.open(wa, '_blank', 'noopener');
+      showToast('Заявка принята, перезвоним за 5 минут');
+      nameI.value = ''; phoneI.value = '';
+    });
+  };
+
+  // ===== Skeleton loader for catalog =====
+  const showCatalogSkeletons = (count = 6) => {
+    const placeholder = document.getElementById('catalogDynamicPlaceholder');
+    if (!placeholder) return;
+    let html = '<div class="skeleton-grid">';
+    for (let i = 0; i < count; i++) {
+      html += '<div class="skeleton-card"><div class="sk-img"></div><div class="sk-body">' +
+        '<div class="sk-line sk-h22 sk-w70"></div>' +
+        '<div class="sk-line sk-w50"></div>' +
+        '<div class="sk-line sk-w90"></div>' +
+        '<div class="sk-line sk-w70"></div>' +
+        '</div></div>';
+    }
+    html += '</div>';
+    placeholder.innerHTML = html;
+  };
+
+  const flashFilterSkeleton = () => {
+    const catalog = document.querySelector('main.catalog');
+    if (!catalog) return;
+    catalog.classList.add('is-filtering');
+    clearTimeout(catalog._fltTo);
+    catalog._fltTo = setTimeout(() => catalog.classList.remove('is-filtering'), 280);
+  };
+
+  // ===== Quiz =====
+  const initQuiz = () => {
+    const quiz = document.getElementById('quizSection');
+    if (!quiz || quiz.dataset.quizReady === '1') return;
+    quiz.dataset.quizReady = '1';
+
+    const steps = Array.from(quiz.querySelectorAll('.quiz-step'));
+    const progressDots = Array.from(quiz.querySelectorAll('.quiz-progress span'));
+    const prevBtn = quiz.querySelector('.qbtn-prev');
+    const nextBtn = quiz.querySelector('.qbtn-next');
+    const restartBtn = quiz.querySelector('.qbtn-restart');
+    const resultsBox = quiz.querySelector('.quiz-results');
+    const answers = {};
+    let current = 0;
+
+    const render = () => {
+      steps.forEach((s, i) => s.classList.toggle('active', i === current));
+      progressDots.forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+        d.classList.toggle('done', i < current);
+      });
+      const isLast = current === steps.length - 1;
+      const stepKey = steps[current]?.dataset.key;
+      const hasAnswer = !!answers[stepKey] || isLast;
+      if (prevBtn) prevBtn.style.display = current === 0 ? 'none' : '';
+      if (nextBtn) {
+        nextBtn.textContent = isLast ? 'Подобрать' : 'Далее →';
+        nextBtn.disabled = !hasAnswer;
+      }
+      if (restartBtn) restartBtn.style.display = quiz.classList.contains('show-results') ? '' : 'none';
+    };
+
+    quiz.addEventListener('click', (e) => {
+      const opt = e.target.closest('.quiz-option');
+      if (opt) {
+        const step = opt.closest('.quiz-step');
+        const key = step.dataset.key;
+        answers[key] = opt.dataset.value;
+        step.querySelectorAll('.quiz-option').forEach(o => o.classList.toggle('selected', o === opt));
+        render();
+        return;
+      }
+      if (e.target.closest('.qbtn-next')) {
+        if (current < steps.length - 1) { current++; render(); }
+        else { computeResults(); }
+      } else if (e.target.closest('.qbtn-prev')) {
+        if (current > 0) { current--; render(); }
+      } else if (e.target.closest('.qbtn-restart')) {
+        Object.keys(answers).forEach(k => delete answers[k]);
+        quiz.classList.remove('show-results');
+        steps.forEach(s => s.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected')));
+        current = 0;
+        if (resultsBox) resultsBox.innerHTML = '';
+        render();
+      }
+    });
+
+    const computeResults = () => {
+      const data = Array.isArray(window.PRODUCTS_DATA) ? window.PRODUCTS_DATA.filter(canShowProduct) : [];
+      const cargo = answers.cargo;
+      const budget = answers.budget;
+      const budgetMax = budget === 'low' ? 80000 : budget === 'mid' ? 120000 : Infinity;
+      const budgetMin = budget === 'high' ? 120000 : 0;
+
+      const scored = data.map(p => {
+        let score = 0;
+        if (cargo === 'boat' || cargo === 'moto') {
+          if (p.type === 'Специализированный') score += 3;
+        } else if (cargo === 'build' || cargo === 'household') {
+          if (p.type === 'Бортовой') score += 3;
+        } else if (cargo === 'atv') {
+          if (p.type === 'Специализированный' || p.type === 'Бортовой') score += 2;
+        }
+        const price = Number(p.price || 0);
+        if (price <= budgetMax && price >= budgetMin) score += 2;
+        if (price <= budgetMax) score += 1;
+        return { p, score };
+      }).sort((a, b) => b.score - a.score);
+
+      const picks = scored.slice(0, 3).map(x => x.p);
+      if (resultsBox) {
+        if (!picks.length) {
+          resultsBox.innerHTML = '<div class="quiz-empty">К сожалению, под эти условия пока нет товаров. Откройте каталог или напишите нам — поможем подобрать.</div>';
+        } else {
+          resultsBox.innerHTML = picks.map(p => `
+            <div class="quiz-result-card">
+              <div class="qr-img"><img src="${escapeHtml(p.images?.[0] || '')}" alt="${escapeHtml(p.title)}" loading="lazy" decoding="async"/></div>
+              <div class="qr-title">${escapeHtml(p.title)}</div>
+              <div class="qr-price">${escapeHtml(formatCatalogPrice(p.price))}</div>
+              <a class="qr-link" href="products/${escapeHtml(p.slug)}/">Открыть карточку</a>
+            </div>`).join('');
+        }
+      }
+      quiz.classList.add('show-results');
+      const lastStep = steps[steps.length - 1];
+      if (lastStep) lastStep.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      render();
+    };
+
+    render();
+  };
+
+  // ===== Share button =====
+  const initShareButton = (root = document) => {
+    root.querySelectorAll('.share-btn').forEach(btn => {
+      if (btn.dataset.shareReady === '1') return;
+      btn.dataset.shareReady = '1';
+      btn.addEventListener('click', async () => {
+        const title = document.title;
+        const url = location.href;
+        const text = btn.dataset.shareText || title;
+        const toast = document.getElementById('copyToast');
+        try {
+          if (navigator.share) {
+            await navigator.share({ title, text, url });
+          } else if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(url);
+            if (toast) { toast.textContent = 'Ссылка скопирована'; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 1800); }
+          }
+        } catch { /* user cancelled */ }
+      });
+    });
+  };
+
+  // ===== Blur-up lazy images =====
+  const initBlurUp = (root = document) => {
+    const imgs = root.querySelectorAll('img:not([data-blur-ready])');
+    imgs.forEach(img => {
+      img.dataset.blurReady = '1';
+      // Skip icons / svgs / data URIs / very small assets
+      const src = img.getAttribute('src') || '';
+      if (!src || src.startsWith('data:') || /\.svg($|\?)/i.test(src)) return;
+      // Skip logo/header
+      if (img.closest('header') || img.classList.contains('contact-action-icon') || img.classList.contains('messenger-icon-img')) return;
+      if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+      if (!img.hasAttribute('decoding')) img.setAttribute('decoding', 'async');
+      img.classList.add('blur-up');
+      const markLoaded = () => img.classList.add('loaded');
+      if (img.complete && img.naturalWidth > 0) markLoaded();
+      else { img.addEventListener('load', markLoaded, { once: true }); img.addEventListener('error', markLoaded, { once: true }); }
+    });
+  };
+
   initIntroSplash();
   initEmbeddedProductPage();
+  showCatalogSkeletons(6);
   renderCatalogFromData();
   initGalleries(document);
   initTabs(document);
   initFilters();
+  // Hook fade transition into existing filter inputs
+  document.querySelectorAll('input[name="type"], #lengthFilter, #axlesFilter, #capacityFilter, #priceFilter, #sortFilter, #resetFilters')
+    .forEach(el => el.addEventListener(el.tagName === 'BUTTON' ? 'click' : 'input', flashFilterSkeleton));
   initCallModal(document);
   initWriteModal(document);
+  initCallbackForm();
   initCopyNumber();
   initProductPreviewModal();
   initThemeToggle();
+  initQuiz();
+  initShareButton(document);
+  initBlurUp(document);
   initRipple(document);
   initTilt(document);
   initParallax();
@@ -876,6 +1106,9 @@ ${images}
   const observer = new MutationObserver(() => {
     initRipple(document);
     initTilt(document);
+    initShareButton(document);
+    initBlurUp(document);
+    initCallbackForm();
   });
   observer.observe(document.body, { childList: true, subtree: true });
 })();
