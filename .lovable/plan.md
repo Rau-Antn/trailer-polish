@@ -1,42 +1,41 @@
 
 
-## План: чиним модалку «Написать» + наводим порядок
+## План: 3 точечных правки
 
-По скринам видно: главная и «О компании» **уже изменены правильно** (нет блока «Каталог», FAQ переехал, премиальная шапка контактов внизу). Если на ваших скринах главной нет изменений — это кеш браузера (Ctrl+Shift+R обновит).
+### 1. Фото в карточках каталога — убрать наложение
+`public/css/style.css`, блок `.gallery img`:
+- Принудительно `opacity: 0 !important` для всех изображений галереи.
+- `.gallery img.active { opacity: 1 !important }` — видна только активная.
+- Сохранить плавный `transition: opacity .35s ease`.
 
-Реальная проблема одна: **модалка «Написать» переполнена** — callback-форма + 4 мессенджера не помещаются по высоте, заголовок «Куда написать?» обрезается сверху.
+### 2. FAQ — только на странице «О компании»
+- `public/catalog.html`: удалить секцию `<section class="faq-section" id="faq">…</section>` целиком (если ещё осталась).
+- `public/index.html`: убедиться что FAQ удалён.
+- `public/about.html`: FAQ остаётся, добавить отступ сверху (`padding-top: 90px; scroll-margin-top: 80px`), чтобы заголовок не подлезал под шапку.
 
----
+### 3. Модалка «Написать» — 2 колонки, без ползунка, без лишнего текста
 
-### 1. Компактная модалка «Написать»
+**CSS** (`public/css/style.css`):
+- `.write-modal-box` — расширить до `max-width: 760px`, убрать `overflow-y: auto` и `max-height` (никакого скролла).
+- Контент в 2 колонки на десктопе: `display: grid; grid-template-columns: 1fr 1fr; gap: 16px`.
+  - Левая колонка — мессенджеры (`.write-options`).
+  - Правая колонка — форма «Жду звонка» (`.callback-form`).
+- На мобилке (`max-width: 720px`) — обратно в одну колонку.
+- Крестик закрытия — `position: absolute; top: 10px; right: 10px`.
+- Компактнее: `.write-option { min-height: 52px }`, `.callback-form { padding: 14px; gap: 10px }`.
 
-Файл: `public/css/style.css`
-
-- `.write-modal-box` — добавить `max-height: 92vh` и `overflow-y: auto` со стилизованным скроллом (тонкая полоска).
-- Уменьшить внутренние отступы: `padding: 20px` (было 24), `border-radius: 24px`.
-- `.write-head h3` — `font-size: 22px` (было 28), убрать «eyebrow» из верха (избыточный текст).
-- `.callback-form` — `padding: 14px`, `gap: 10px`, заголовок `cb-title` до 14px, кнопка `cb-submit` компактнее (`padding: 11px 16px`).
-- `.write-options` — `gap: 8px`, `.write-option` высотой 56px (вместо ~72), иконка 36×36, описание в одну строку.
-- На мобилке (`max-width: 540px`) — модалка занимает почти весь экран, форма и кнопки растягиваются на всю ширину.
-
-Итого: всё умещается в одно окно без скролла на десктопе и с лёгким скроллом на телефоне.
-
-### 2. Убрать дубль «eyebrow» в шапке модалки
-
-Файлы: `public/index.html`, `public/catalog.html`, `public/about.html`, `public/contacts.html`, `public/products/kama-1/index.html`, `public/products/kama-lite-250x130/index.html`, `public/products/skif-185x121/index.html`, `public/products/sputnik-250x127/index.html`, `public/products/_NEW_PRODUCT_TEMPLATE/index.html`.
-
-В блоке `#writeModal` удалить строку `<div class="eyebrow">Выберите удобный способ связи</div>` — текст дублирует подзаголовок и съедает место.
-
-### 3. Подсказка по кешу
-
-После правок попрошу один раз нажать **Ctrl+Shift+R** в превью — иначе вы продолжите видеть старую версию index.html и думать, что ничего не поменялось.
+**HTML** (9 файлов: `index.html`, `catalog.html`, `about.html`, `contacts.html`, `products/kama-1/index.html`, `products/kama-lite-250x130/index.html`, `products/skif-185x121/index.html`, `products/sputnik-250x127/index.html`, `products/_NEW_PRODUCT_TEMPLATE/index.html`):
+- Удалить из `#writeModal` строку с текстом «Откроется выбранный мессенджер или почта».
+- Обернуть `.write-options` и `.callback-form` в общий контейнер с grid-раскладкой.
 
 ---
 
 ### Технические детали
-
-- Никаких изменений в JS — `initCallbackForm` и `initWriteModal` работают как есть.
-- Проверю что `.callback-form` и `.write-options` корректно скроллятся внутри `.write-modal-box` (overflow только на боксе, а не на самом overlay — иначе сломается `backdrop-filter`).
-- Светлая тема — добавлю стили скроллбара через `body.light-theme .write-modal-box::-webkit-scrollbar-thumb`.
-- Затрагиваемые файлы: `public/css/style.css` (~40 строк) + 9 HTML-файлов (1 строка удаления в каждом).
+- Файлы: `public/css/style.css` (~50 строк), `public/catalog.html` (удалить FAQ если есть), 9 HTML с модалкой (удалить лишний текст + добавить grid-обёртку).
+- JS не трогаю — `initCallbackForm` и `initWriteModal` работают как есть.
+- После правок открою preview в браузере на вьюпорте 855×535 и сделаю скриншоты:
+  1. Каталога — убедиться что в карточке одно фото.
+  2. About — FAQ виден полностью, заголовок не обрезан.
+  3. Модалки «Написать» — 2 колонки, без ползунка, без фразы про мессенджер/почту.
+- Если хоть один баг останется — фикшу в том же раунде.
 
