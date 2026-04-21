@@ -1,26 +1,40 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/")({
   component: Index,
+  head: () => ({
+    meta: [
+      { title: "Мир прицепов Омск — легковые прицепы в наличии" },
+      {
+        name: "description",
+        content:
+          "Продажа легковых прицепов в Омске: бортовые и специализированные модели. Горячее цинкование, гарантия, доставка. Звоните: 8-913-147-4624.",
+      },
+    ],
+  }),
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
+// Корневой маршрут перенаправляет на статический сайт в /public/index.html.
+// Сам сайт (HTML/CSS/JS, каталог, карточки) живёт в public/ — TanStack Router
+// здесь работает только как точка входа и SEO-метаданные первого экрана.
+function Index() {
+  useEffect(() => {
+    window.location.replace("/index.html");
+  }, []);
   return (
     <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#0b1017",
+        color: "#cfe6ff",
+        fontFamily: "system-ui, -apple-system, sans-serif",
+      }}
     >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+      Загрузка…
     </div>
   );
-}
-
-function Index() {
-  return <PlaceholderIndex />;
 }

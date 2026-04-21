@@ -297,14 +297,18 @@
     }
 
     const html = visibleProducts.map(product => {
-      const images = product.images.map((src, index) => `
+      // Одна галерея на товар со всеми его фото (не повторять по числу картинок!)
+      const galleryImages = product.images.map((innerSrc, innerIndex) =>
+        `    <img alt="${escapeHtml((product.title || 'Товар') + ' ' + (innerIndex + 1))}" ${innerIndex === 0 ? 'class="active" ' : ''}src="${escapeHtml(innerSrc)}" ${innerIndex === 0 ? 'decoding="async" fetchpriority="high"' : 'loading="lazy" decoding="async" fetchpriority="low"'}/>`
+      ).join('\n');
+      const images = `
 <div class="gallery">
   <div class="gallery-stage">
-${product.images.map((innerSrc, innerIndex) => `    <img alt="${escapeHtml((product.title || 'Товар') + ' ' + (innerIndex + 1))}" ${innerIndex === 0 ? 'class="active" ' : ''}src="${escapeHtml(innerSrc)}" ${innerIndex === 0 ? 'decoding="async" fetchpriority="high"' : 'loading="lazy" decoding="async" fetchpriority="low"'}/>`).join('\n')}
+${galleryImages}
   </div>
   <button class="prev" type="button">‹</button>
   <button class="next" type="button">›</button>
-</div>`.trim()).slice(0,1).join('');
+</div>`.trim();
       const badges = (product.badges || []).map((badge, index) => `<div class="badge${index === (product.badges || []).length - 1 && /в наличии/i.test(badge) ? ' badge-stock' : ''}">${escapeHtml(badge)}</div>`).join('');
       const description = escapeHtml(product.description || '').replace(/\n/g, '<br/>');
       const specs = (product.specs || []).map(spec => `<div class="spec-row"><span>${escapeHtml(spec.label)}</span><strong>${escapeHtml(spec.value)}</strong></div>`).join('');
