@@ -631,7 +631,21 @@ ${images}
       splash.classList.add('is-entered');
     }, 80);
 
-    autoTimer = window.setTimeout(() => closeSplash(false), 2550);
+    // Закрываем по окончании видео — выглядит плавно и завершённо
+    const video = splash.querySelector('.intro-splash__video');
+    let maxWait = 5200; // запасной таймаут
+    if (video) {
+      video.addEventListener('ended', () => closeSplash(false), { once: true });
+      video.addEventListener('loadedmetadata', () => {
+        if (isFinite(video.duration) && video.duration > 0) {
+          maxWait = Math.min(Math.round(video.duration * 1000) + 400, 9000);
+        }
+      }, { once: true });
+      // Подстраховка: если видео не загрузится
+      const tryPlay = video.play();
+      if (tryPlay && typeof tryPlay.catch === 'function') tryPlay.catch(() => {});
+    }
+    autoTimer = window.setTimeout(() => closeSplash(false), maxWait);
   };
 
 
