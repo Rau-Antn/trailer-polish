@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>Каталог прицепов — Мир прицепов Омск</title><meta content="Каталог легковых прицепов в Омске: бортовые и специализированные модели, фильтры по цене, длине, осям и грузоподъёмности." name="description"/><meta content="#0b1017" name="theme-color"/><meta content="telephone=no" name="format-detection"/><link href="favicon.png" rel="icon" type="image/png"/><link href="css/style.css" rel="stylesheet"/></head><body><header><div class="header-inner"><div class="logo-wrap"><div class="logo-headlight"><img alt="Логотип Мир прицепов Омск" class="logo" decoding="async" fetchpriority="high" onerror="this.style.display='none'; this.closest('.logo-wrap').querySelector('.brand-fallback').style.display='inline-flex'; this.parentElement.style.display='none';" src="logo.png"/><span aria-hidden="true" class="headlight-overlay"><span class="headlight-core"></span><span class="headlight-glow"></span><span class="headlight-beam"></span></span></div><div class="brand-fallback">МИР ПРИЦЕПОВ · ОМСК</div></div><nav><a href="index.html">Главная</a>
+<a href="catalog.html" style="background:rgba(69,185,255,.08);border-color:rgba(69,185,255,.18);">Каталог</a>
+<a href="about.html">О компании</a>
+<a href="contacts.html">Контакты</a></nav></div></header><section class="filters-wrap" id="filters">
+<div class="filters">
+<div class="filters-head">
+<div>
+<h3>Фильтр прицепов</h3>
+<p>Подберите модель по типу, длине платформы, количеству осей, грузоподъёмности, цене и сортировке.</p>
+</div>
+<div class="filter-count" id="filterCount">Найдено: …</div>
+</div>
+<div class="filter-grid">
+<div class="filter-card">
+<label class="title">Тип прицепа</label>
+<div class="check-list">
+<label class="check"><input name="type" type="checkbox" value="Бортовой"/> <span>Бортовой (открытый)</span></label>
+<label class="check"><input name="type" type="checkbox" value="Специализированный"/> <span>Специализированный</span></label>
+</div>
+</div>
+<div class="filter-card">
+<label class="title" for="lengthFilter">Длина платформы</label>
+<select class="filter-select" id="lengthFilter">
+<option value="">Все варианты</option>
+<option value="До 2,0 м">До 2,0 м</option>
+<option value="До 2,5 м">До 2,5 м</option>
+<option value="До 3,0 м">До 3,0 м</option>
+<option value="До 3,5 м">До 3,5 м</option>
+<option value="Более 3,5 м">Более 3,5 м</option>
+</select>
+</div>
+<div class="filter-card">
+<label class="title" for="axlesFilter">Количество осей</label>
+<select class="filter-select" id="axlesFilter">
+<option value="">Все варианты</option>
+<option value="Одноосный">Одноосный</option>
+<option value="Двухосный">Двухосный</option>
+</select>
+</div>
+<div class="filter-card">
+<label class="title" for="capacityFilter">Грузоподъёмность</label>
+<select class="filter-select" id="capacityFilter">
+<option value="">Все варианты</option>
+<option value="До 750 кг">До 750 кг</option>
+<option value="750 – 1200 кг">750 – 1200 кг</option>
+<option value="Более 1200 кг">Более 1200 кг</option>
+</select>
+</div>
+<div class="filter-card">
+<label class="title" for="priceFilter">Цена</label>
+<div class="price-value">
+<span>До</span>
+<span id="priceValue">500 000 ₽</span>
+</div>
+<input class="price-range" id="priceFilter" max="500000" min="0" step="5000" type="range" value="500000"/>
+</div>
+<div class="filter-card">
+<label class="title" for="sortFilter">Сортировка</label>
+<select class="filter-select" id="sortFilter">
+<option value="">По умолчанию</option>
+<option value="asc">Сначала дешевле</option>
+<option value="desc">Сначала дороже</option>
+</select>
+</div>
+</div>
+<div class="filter-actions">
+<div class="filter-note">Фильтр работает прямо на странице и мгновенно обновляет каталог.</div>
+<button class="filter-reset" id="resetFilters" type="button">Сбросить фильтр</button>
+</div>
+</div>
+</section><main class="catalog" id="catalog"><div class="catalog-dynamic-placeholder" id="catalogDynamicPlaceholder">Каталог загружается…</div></main>
+<section class="contact-section bottom-contact">
+<div class="contact-shell">
+<div class="contact-head">
+<div>
+<h3>Связаться с нами</h3>
+<p>Уточните наличие, комплектацию и цену удобным способом. Внизу собраны все основные контакты, чтобы клиенту не пришлось ничего искать.</p>
+</div>
+<div class="contact-badge">Быстрый ответ в рабочее время</div>
+</div>
+<div class="contact-mini-grid">
+<div class="contact-summary-card">
+<div class="contact-summary-list">
+<div class="contact-summary-item">
+<div class="contact-icon">📞</div>
+<div>
+<strong>Телефон для связи</strong>
+<p><a href="tel:89131474624">8-913-147-4624</a><small>Быстрый звонок по наличию и цене</small></p>
+</div>
+</div>
+<div class="contact-summary-item">
+<div class="contact-icon">✉️</div>
+<div>
+<strong>Электронная почта</strong>
+<p><a href="mailto:mirpricepovomsk@mail.ru">mirpricepovomsk@mail.ru</a><small>Для вопросов, фото и заявок</small></p>
+</div>
+</div>
+<div class="contact-summary-item">
+<div class="contact-icon">📍</div>
+<div>
+<strong>Адрес площадки</strong>
+<p>г. Омск, 19-я Линия, 107<small>Приезжайте посмотреть прицепы вживую</small></p>
+</div>
+</div>
+</div>
+</div>
+<div class="contact-links-card">
+<div>
+<h4 class="contact-links-title">Написать или открыть маршрут</h4>
+<p class="contact-links-subtitle">Выберите удобный способ связи: мессенджеры, почта, звонок или маршрут до площадки.</p>
+<div class="contact-links-grid">
+<a class="contact-action" href="https://wa.me/message/VCWPWX6RHERXG1" rel="noopener noreferrer" target="_blank">
+<img alt="WhatsApp" class="contact-action-icon" decoding="async" height="22" loading="lazy" src="icons/whatsapp.svg" width="22"/>
+<span class="contact-action-label">WhatsApp<small>Быстро написать</small></span>
+</a>
+<a class="contact-action" href="https://t.me/pricepyOmsk" rel="noopener noreferrer" target="_blank">
+<img alt="Telegram" class="contact-action-icon" decoding="async" height="22" loading="lazy" src="icons/telegram.svg" width="22"/>
+<span class="contact-action-label">Telegram<small>Написать в Telegram</small></span>
+</a>
+<a class="contact-action" href="https://max.ru/u/f9LHodD0cOKLcN8qbYZyoH9yQEbI3aTrkYl_ZfA0NT5dStCIu3BOCrVEm6o" rel="noopener noreferrer" target="_blank">
+<img alt="MAX" class="contact-action-icon" decoding="async" height="22" loading="lazy" src="icons/max.svg" width="22"/>
+<span class="contact-action-label">MAX<small>Сообщение в MAX</small></span>
+</a>
+<a class="contact-action" href="mailto:mirpricepovomsk@mail.ru">
+<svg aria-hidden="true" fill="none" viewbox="0 0 24 24"><rect height="14" rx="3" stroke="#82d8ff" stroke-width="1.5" width="18" x="3" y="5"></rect><path d="M4 7l8 6 8-6" stroke="#82d8ff" stroke-width="1.5"></path></svg>
+<span class="contact-action-label">E-mail<small>Отправить письмо</small></span>
+</a>
+<a class="contact-action" href="tel:89131474624">
+<svg aria-hidden="true" fill="none" viewbox="0 0 24 24"><path d="M6.7 4.5h2.2c.4 0 .8.3.9.7l.6 2.7c.1.4 0 .8-.3 1.1l-1.3 1.3a13.6 13.6 0 0 0 5 5l1.3-1.3c.3-.3.7-.4 1.1-.3l2.7.6c.4.1.7.5.7.9v2.2c0 .6-.4 1-.9 1.1-.8.1-1.6.2-2.3.2C10 19.9 4.1 14 4.1 6.8c0-.8 0-1.5.2-2.3.1-.5.5-1 1.1-1Z" stroke="#82d8ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path></svg>
+<span class="contact-action-label">Позвонить<small>Открыть звонок</small></span>
+</a>
+<a class="contact-action" href="https://yandex.ru/maps/?rtext=~54.988,73.383" rel="noopener noreferrer" target="_blank">
+<svg aria-hidden="true" fill="none" viewbox="0 0 24 24"><path d="M12 21s6-5.4 6-11a6 6 0 1 0-12 0c0 5.6 6 11 6 11Z" stroke="#82d8ff" stroke-width="1.5"></path><circle cx="12" cy="10" r="2.4" stroke="#82d8ff" stroke-width="1.5"></circle></svg>
+<span class="contact-action-label">Маршрут<small>Открыть навигатор</small></span>
+</a>
+</div>
+</div>
+<div class="contact-bottom-note">ПН–СБ: с 09:00 до 18:00 · Воскресенье: по договорённости</div>
+</div>
+</div>
+</div>
+</section>
+<button aria-label="Позвонить" class="float-btn float-call open-call-modal" type="button">📞</button>
+<button aria-label="Написать" class="float-btn float-wa open-write-modal" type="button">💬</button>
+<div class="call-modal" id="callModal">
+<div class="call-box">
+<button aria-label="Закрыть" class="call-close" type="button">×</button>
+<div class="call-content">
+<div class="call-icon">📞</div>
+<h3 class="call-title">Позвонить</h3>
+<p class="call-text">Сначала показываем номер. Нажмите на него, чтобы начать звонок.</p>
+<a class="call-number" href="tel:89131474624">8-913-147-4624</a>
+<button class="copy-number" type="button">Скопировать номер</button>
+<div class="call-note">После нажатия откроется звонок на вашем устройстве</div>
+</div>
+</div>
+</div>
+<div class="write-modal" id="writeModal">
+<div class="write-modal-box">
+<button aria-label="Закрыть" class="write-close" type="button">×</button>
+<div class="write-head">
+<div class="eyebrow">Выберите удобный способ связи</div>
+<h3>Куда написать?</h3>
+<p>Откроется выбранный мессенджер или почта.</p>
+</div>
+<div class="write-options">
+<a class="write-option" href="https://wa.me/message/VCWPWX6RHERXG1" rel="noopener noreferrer" target="_blank"><div class="write-option-main"><div class="write-option-icon"><img alt="WhatsApp" class="messenger-icon-img" decoding="async" height="20" loading="lazy" src="icons/whatsapp.svg" width="20"/></div><div><strong>WhatsApp</strong><small>Быстрое сообщение в WhatsApp</small></div></div><div class="write-option-arrow">›</div></a>
+<a class="write-option" href="https://t.me/pricepyOmsk" rel="noopener noreferrer" target="_blank"><div class="write-option-main"><div class="write-option-icon"><img alt="Telegram" class="messenger-icon-img" decoding="async" height="20" loading="lazy" src="icons/telegram.svg" width="20"/></div><div><strong>Telegram</strong><small>Переход в Telegram для связи</small></div></div><div class="write-option-arrow">›</div></a>
+<a class="write-option" href="https://max.ru/u/f9LHodD0cOKLcN8qbYZyoH9yQEbI3aTrkYl_ZfA0NT5dStCIu3BOCrVEm6o" rel="noopener noreferrer" target="_blank"><div class="write-option-main"><div class="write-option-icon"><img alt="MAX" class="messenger-icon-img" decoding="async" height="20" loading="lazy" src="icons/max.svg" width="20"/></div><div><strong>MAX</strong><small>Переход в MAX для связи</small></div></div><div class="write-option-arrow">›</div></a>
+<a class="write-option" href="mailto:mirpricepovomsk@mail.ru"><div class="write-option-main"><div class="write-option-icon"><svg fill="none" height="20" viewbox="0 0 24 24" width="20"><rect height="14" rx="3" stroke="#82d8ff" stroke-width="1.5" width="18" x="3" y="5"></rect><path d="M4 7l8 6 8-6" stroke="#82d8ff" stroke-width="1.5"></path></svg></div><div><strong>Email</strong><small>Открыть почту для отправки письма</small></div></div><div class="write-option-arrow">›</div></a>
+</div></div></div>
+<div class="copy-toast" id="copyToast">Номер скопирован</div>
+<script src="js/products-data.js"></script><script defer="" src="js/main.js"></script></body></html>
