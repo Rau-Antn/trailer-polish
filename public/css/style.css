@@ -2453,28 +2453,41 @@ body.light-theme .hero-cinematic h1{
 .gallery-stage img,
 .gallery img{ border-radius:16px; }
 
-/* Catalog cards: фото без белых полей, edge-to-edge со скруглением */
-main.catalog .item .gallery{
+/* Catalog & preview: фото целиком в скруглённом окне (без обрезки) */
+main.catalog .item .gallery,
+.product-preview-item .gallery{
   padding:0 !important;
   border:1px solid rgba(255,255,255,.08);
-  background:#0e141c;
-}
-main.catalog .item .gallery-stage{
-  min-height:280px;
+  background:linear-gradient(180deg,#141b25,#0e141c);
   border-radius:22px !important;
-  background:#0e141c;
+  overflow:hidden;
+}
+main.catalog .item .gallery-stage,
+.product-preview-item .gallery-stage{
+  min-height:300px;
+  border-radius:22px !important;
+  background:linear-gradient(180deg,#141b25,#0e141c);
+  overflow:hidden;
 }
 main.catalog .item .gallery-stage img,
-main.catalog .item .gallery img{
-  padding:0 !important;
-  object-fit:cover !important;
+main.catalog .item .gallery img,
+.product-preview-item .gallery-stage img,
+.product-preview-item .gallery img{
+  padding:10px !important;
+  object-fit:contain !important;
   object-position:center !important;
   border-radius:22px !important;
   width:100% !important; height:100% !important;
   inset:0 !important;
+  background:transparent !important;
 }
 body.light-theme main.catalog .item .gallery,
-body.light-theme main.catalog .item .gallery-stage{ background:#eef2f8; }
+body.light-theme main.catalog .item .gallery-stage,
+body.light-theme .product-preview-item .gallery,
+body.light-theme .product-preview-item .gallery-stage{
+  background:linear-gradient(180deg,#f3f6fb,#e9eef6);
+  border-color:rgba(15,30,55,.08);
+}
 
 .item .gallery-stage::after{
   content:""; position:absolute; inset:0; pointer-events:none;
