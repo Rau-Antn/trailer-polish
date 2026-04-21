@@ -2444,59 +2444,82 @@ body.light-theme .hero-cinematic h1{
     0 0 32px -12px rgba(69,185,255,.18);
 }
 
-/* Rounded photos + soft spotlight on photo only */
-.item .gallery,
-.gallery{ border-radius:22px !important; overflow:hidden; }
-.item .gallery-stage,
-.gallery-stage{ border-radius:18px !important; overflow:hidden; position:relative; }
-.item .gallery-stage img,
-.gallery-stage img,
-.gallery img{ border-radius:16px; }
+/* ============================================================
+   PHOTO FRAME — единое решение для каталога, превью и страницы товара
+   Контейнер = скруглённое «окно», фото вписано целиком (contain), без обрезки.
+   ============================================================ */
 
-/* Catalog & preview: фото целиком в скруглённом окне (без обрезки) */
-main.catalog .item .gallery,
+/* 1) Внешний контейнер галереи — скруглённое окно с фоном и рамкой */
+.gallery,
+.item .gallery,
 .product-preview-item .gallery{
+  border-radius:24px !important;
+  overflow:hidden !important;
   padding:0 !important;
   border:1px solid rgba(255,255,255,.08);
-  background:linear-gradient(180deg,#141b25,#0e141c);
-  border-radius:22px !important;
-  overflow:hidden;
+  background:linear-gradient(180deg,#141b25 0%, #0e141c 100%);
+  position:relative;
 }
-main.catalog .item .gallery-stage,
+
+/* 2) Сцена внутри галереи — БЕЗ собственного фона/рамки/радиуса (наследует от .gallery) */
+.gallery-stage,
+.item .gallery-stage,
 .product-preview-item .gallery-stage{
-  min-height:300px;
-  border-radius:22px !important;
-  background:linear-gradient(180deg,#141b25,#0e141c);
-  overflow:hidden;
+  position:relative !important;
+  width:100% !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  overflow:hidden !important;
+  aspect-ratio: 4 / 3;
+  min-height:0 !important;
 }
-main.catalog .item .gallery-stage img,
-main.catalog .item .gallery img,
-.product-preview-item .gallery-stage img,
-.product-preview-item .gallery img{
-  padding:10px !important;
+
+/* 3) Сама фотография — вписана целиком, БЕЗ скругления (его даёт контейнер) */
+.gallery img,
+.gallery-stage img,
+.item .gallery img,
+.item .gallery-stage img,
+.product-preview-item .gallery img,
+.product-preview-item .gallery-stage img{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
   object-fit:contain !important;
   object-position:center !important;
-  border-radius:22px !important;
-  width:100% !important; height:100% !important;
-  inset:0 !important;
+  padding:14px !important;
+  border-radius:0 !important;
   background:transparent !important;
+  box-sizing:border-box !important;
 }
-body.light-theme main.catalog .item .gallery,
-body.light-theme main.catalog .item .gallery-stage,
-body.light-theme .product-preview-item .gallery,
-body.light-theme .product-preview-item .gallery-stage{
-  background:linear-gradient(180deg,#f3f6fb,#e9eef6);
+
+/* 4) Светлая тема */
+body.light-theme .gallery,
+body.light-theme .item .gallery,
+body.light-theme .product-preview-item .gallery{
+  background:linear-gradient(180deg,#f3f6fb 0%, #e9eef6 100%);
   border-color:rgba(15,30,55,.08);
 }
 
-.item .gallery-stage::after{
+/* 5) Spotlight только на карточках каталога */
+.item .gallery::after{
   content:""; position:absolute; inset:0; pointer-events:none;
   border-radius:inherit;
   background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),
-    rgba(130,216,255,.10), transparent 60%);
+    rgba(130,216,255,.12), transparent 60%);
   opacity:0; transition:opacity .35s; z-index:3;
 }
-.item .gallery-stage:hover::after{ opacity:1; }
+.item .gallery:hover::after{ opacity:1; }
+
+/* 6) На странице товара (большая галерея) — выше пропорция */
+.product-page .gallery,
+main:not(.catalog) .gallery{
+  /* радиус и фон уже заданы выше */
+}
+.product-page .gallery-stage,
+main:not(.catalog) .gallery-stage{
+  aspect-ratio: 4 / 3;
+}
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce){
