@@ -611,6 +611,8 @@ ${images}
     const splash = document.getElementById('introSplash');
     if (!splash || !body.classList.contains('home-page')) return;
 
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     body.classList.add('splash-active');
 
     let closed = false;
@@ -647,12 +649,17 @@ ${images}
     document.addEventListener('keydown', skipNow);
     window.addEventListener('wheel', skipNow, { passive: true, once: true });
 
-    // Логотип проявляется из тумана сразу после первого кадра
+    if (reduceMotion) {
+      // Минимальный показ для пользователей с reduced-motion
+      splash.classList.add('is-entered');
+      autoTimer = window.setTimeout(() => closeSplash(true), 500);
+      return;
+    }
+
     enterTimer = window.setTimeout(() => {
       splash.classList.add('is-entered');
     }, 120);
 
-    // Хореография: 0.12s ожидание → ~1.8s проявление → ~1.4s удержание → ~1.7s растворение
     autoTimer = window.setTimeout(() => closeSplash(false), 3400);
   };
 
