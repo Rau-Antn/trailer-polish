@@ -518,6 +518,64 @@ ${images}
       };
     };
 
+    // Fallback: build preview directly from window.PRODUCTS_DATA when fetch is blocked
+    // (e.g. when running inside the Lovable preview iframe / SPA proxy that returns shell HTML).
+    const buildPreviewFromData = (url) => {
+      const data = Array.isArray(window.PRODUCTS_DATA) ? window.PRODUCTS_DATA : null;
+      if (!data) return null;
+      // Match by slug derived from the URL path: products/<slug>/ or products/<slug>.html
+      const match = url.match(/products\/([^/.?#]+)(?:\/|\.html)?/i);
+      const slug = match ? match[1] : null;
+      if (!slug) return null;
+      const product = data.find(p => p && p.slug === slug && canShowProduct(p));
+      if (!product) return null;
+
+      const galleryImages = product.images.map((src, i) =>
+        `<img alt="${escapeHtml((product.title || 'Товар') + ' ' + (i + 1))}" ${i === 0 ? 'class="active" ' : ''}src="${escapeHtml(src)}" ${i === 0 ? 'decoding="async"' : 'loading="lazy" decoding="async"'}/>`
+      ).join('');
+      const badges = (product.badges || []).map((b, i, arr) =>
+        `<div class="badge${i === arr.length - 1 && /в наличии/i.test(b) ? ' badge-stock' : ''}">${escapeHtml(b)}</div>`
+      ).join('');
+      const description = escapeHtml(product.description || '').replace(/\n/g, '<br/>');
+      const specs = (product.specs || []).map(s =>
+        `<div class="spec-row"><span>${escapeHtml(s.label)}</span><strong>${escapeHtml(s.value)}</strong></div>`
+      ).join('');
+
+      const html = `
+<div class="product-preview-body-inner">
+  <div class="item product-preview-item">
+    <div class="gallery">
+      <div class="gallery-stage">${galleryImages}</div>
+      <button class="prev" type="button">‹</button>
+      <button class="next" type="button">›</button>
+    </div>
+    <div class="info">
+      <div class="badges">${badges}</div>
+      <h2>${escapeHtml(product.title || '')}</h2>
+      <div class="price-row">
+        <div class="price"><small>Цена</small><strong>${escapeHtml(formatCatalogPrice(product.price || 0))}</strong></div>
+        <div class="stock-note">${escapeHtml(product.stockNote || '')}</div>
+      </div>
+      <div class="cta-row">
+        <button class="cta cta-call open-call-modal" type="button"><span>Позвонить</span></button>
+        <button class="cta cta-write open-write-modal" type="button"><span>Написать</span></button>
+      </div>
+      <div class="tabs">
+        <div class="tabs-head">
+          <button class="tab-btn active" data-tab="desc" type="button">Описание</button>
+          <button class="tab-btn" data-tab="specs" type="button">Основные характеристики</button>
+        </div>
+        <div class="tabs-content">
+          <div class="tab-content active" data-content="desc"><div class="desc-box"><p>${description}</p></div></div>
+          <div class="tab-content" data-content="specs"><div class="spec-box">${specs}</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;
+      return { title: product.title || 'Карточка товара', html };
+    };
+
     const loadProductPage = async url => {
       const absoluteUrl = new URL(url, window.location.href).toString();
       if (!productCache.has(absoluteUrl)) {
@@ -529,7 +587,20 @@ ${images}
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             return response.text();
           })
-          .then(html => parseProductPage(html, absoluteUrl));
+          .then(html => {
+            try {
+              return parseProductPage(html, absoluteUrl);
+            } catch (e) {
+              const fallback = buildPreviewFromData(url);
+              if (fallback) return fallback;
+              throw e;
+            }
+          })
+          .catch(err => {
+            const fallback = buildPreviewFromData(url);
+            if (fallback) return fallback;
+            throw err;
+          });
         productCache.set(absoluteUrl, request);
       }
       return productCache.get(absoluteUrl);
@@ -742,39 +813,20 @@ ${images}
     });
   };
 
-  // ========== 3D TILT on catalog cards ==========
+  // 3D tilt removed by user request — оставляем только лёгкий spotlight на ховере фото
   const initTilt = (root = document) => {
     const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     const isTouch = window.matchMedia?.('(hover: none)').matches;
     if (prefersReduced || isTouch) return;
 
-    root.querySelectorAll('main.catalog .item').forEach(card => {
-      if (card.dataset.tiltReady === '1') return;
-      card.dataset.tiltReady = '1';
-
-      let rafId = null;
-      const onMove = e => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
-        const rx = (0.5 - y) * 6;   // max 6deg
-        const ry = (x - 0.5) * 8;   // max 8deg
-        card.style.setProperty('--mx', (x * 100) + '%');
-        card.style.setProperty('--my', (y * 100) + '%');
-        if (rafId) cancelAnimationFrame(rafId);
-        rafId = requestAnimationFrame(() => {
-          card.style.transform = `perspective(1200px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
-        });
-      };
-      const onEnter = () => card.classList.add('is-tilting');
-      const onLeave = () => {
-        card.classList.remove('is-tilting');
-        if (rafId) cancelAnimationFrame(rafId);
-        card.style.transform = '';
-      };
-      card.addEventListener('pointerenter', onEnter);
-      card.addEventListener('pointermove', onMove);
-      card.addEventListener('pointerleave', onLeave);
+    root.querySelectorAll('main.catalog .item .gallery-stage').forEach(stage => {
+      if (stage.dataset.spotReady === '1') return;
+      stage.dataset.spotReady = '1';
+      stage.addEventListener('pointermove', e => {
+        const rect = stage.getBoundingClientRect();
+        stage.style.setProperty('--mx', ((e.clientX - rect.left) / rect.width * 100) + '%');
+        stage.style.setProperty('--my', ((e.clientY - rect.top) / rect.height * 100) + '%');
+      });
     });
   };
 
