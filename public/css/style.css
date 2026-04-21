@@ -2504,49 +2504,45 @@ body.light-theme .hero-cinematic h1{
 }
 .cta:hover::after{ opacity:1; }
 
-/* ---------- 3D TILT CARDS ---------- */
+/* ---------- Catalog cards: subtle premium hover (no tilt) ---------- */
 .item{
-  transition:transform .4s cubic-bezier(.19,1,.22,1), box-shadow .4s, border-color .4s;
-  transform-style:preserve-3d;
-  perspective:1200px;
-  will-change:transform;
-}
-.item.is-tilting{
-  transition:transform .1s linear, box-shadow .3s;
+  transition:transform .35s cubic-bezier(.19,1,.22,1), box-shadow .35s, border-color .35s;
+  position:relative;
 }
 .item:hover{
-  border-color:rgba(130,216,255,.25);
+  transform:translateY(-3px);
+  border-color:rgba(130,216,255,.22);
   box-shadow:
-    0 30px 60px -20px rgba(0,0,0,.5),
-    0 0 0 1px rgba(130,216,255,.15) inset,
-    0 0 40px -10px rgba(69,185,255,.2);
+    0 26px 56px -22px rgba(0,0,0,.55),
+    0 0 0 1px rgba(130,216,255,.12) inset,
+    0 0 32px -12px rgba(69,185,255,.18);
 }
-.item .gallery, .item .info{ transform:translateZ(0); transition:transform .4s cubic-bezier(.19,1,.22,1); }
-.item.is-tilting .info{ transform:translateZ(30px); }
-.item.is-tilting .gallery{ transform:translateZ(18px); }
-.item::before{
-  content:""; position:absolute; inset:0; border-radius:inherit;
+
+/* Rounded photos + soft spotlight on photo only */
+.item .gallery-stage{
+  border-radius:22px !important;
+  overflow:hidden;
+  position:relative;
+}
+.item .gallery-stage img{
+  border-radius:18px;
+}
+.item .gallery-stage::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  border-radius:inherit;
   background:radial-gradient(
-    400px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(130,216,255,.10), transparent 40%);
-  opacity:0; transition:opacity .3s;
-  pointer-events:none; z-index:1;
+    260px circle at var(--mx,50%) var(--my,50%),
+    rgba(130,216,255,.10), transparent 60%);
+  opacity:0; transition:opacity .35s;
+  z-index:3;
 }
-.item.is-tilting::before{ opacity:1; }
-.item{ position:relative; }
+.item .gallery-stage:hover::after{ opacity:1; }
 
-/* Disable tilt on touch / small screens */
-@media (hover: none), (max-width: 720px){
-  .item{ transform:none !important; }
-  .item .info, .item .gallery{ transform:none !important; }
-  .item::before{ display:none; }
-}
-
-/* ---------- Reduced motion ---------- */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce){
   .hero-bg-layer{ transform:none !important; }
-  .item{ transform:none !important; }
-  .item .info, .item .gallery{ transform:none !important; }
+  .item, .item:hover{ transform:none !important; }
+  .item .gallery-stage::after{ display:none; }
   .ripple-ink{ display:none; }
   .btn-primary:hover, .btn-ghost:hover, .cta:hover, .theme-toggle:hover{ transform:none !important; }
 }
