@@ -681,6 +681,130 @@ ${images}
     document.getElementById('callModal')?.classList.add('open');
   });
 
+  // ========== THEME TOGGLE (dark/light) ==========
+  const initThemeToggle = () => {
+    // Auto-inject toggle into headers that don't have one (about/contacts/product pages)
+    document.querySelectorAll('header .header-inner').forEach(inner => {
+      if (inner.querySelector('.theme-toggle')) return;
+      const btn = document.createElement('button');
+      btn.className = 'theme-toggle';
+      btn.id = inner.closest('header').querySelector('#themeToggle') ? '' : 'themeToggle';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', 'Переключить тему');
+      btn.title = 'Переключить тему';
+      btn.innerHTML = '<span class="theme-toggle-icon">🌙</span>';
+      inner.appendChild(btn);
+    });
+
+    const saved = (() => { try { return localStorage.getItem('site-theme'); } catch { return null; }})();
+    const applyTheme = theme => {
+      if (theme === 'light') body.classList.add('light-theme');
+      else body.classList.remove('light-theme');
+      document.querySelectorAll('.theme-toggle-icon').forEach(i => {
+        i.textContent = theme === 'light' ? '☀️' : '🌙';
+      });
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', theme === 'light' ? '#f5f7fb' : '#0b1017');
+    };
+    applyTheme(saved || 'dark');
+
+    document.querySelectorAll('.theme-toggle').forEach(btn => {
+      if (btn.dataset.themeReady === '1') return;
+      btn.dataset.themeReady = '1';
+      btn.addEventListener('click', () => {
+        const next = body.classList.contains('light-theme') ? 'dark' : 'light';
+        applyTheme(next);
+        try { localStorage.setItem('site-theme', next); } catch {}
+      });
+    });
+  };
+
+  // ========== RIPPLE EFFECT on buttons ==========
+  const initRipple = (root = document) => {
+    const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+    // Auto-apply ripple to all .btn, .cta, .contact-action, .write-option
+    const selector = '.btn, .cta, .contact-action, .write-option, .float-btn, .copy-number, .theme-toggle';
+    root.querySelectorAll(selector).forEach(el => {
+      if (el.dataset.rippleReady === '1') return;
+      el.dataset.rippleReady = '1';
+      el.addEventListener('pointerdown', e => {
+        const rect = el.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const ink = document.createElement('span');
+        ink.className = 'ripple-ink';
+        ink.style.width = ink.style.height = size + 'px';
+        ink.style.left = (e.clientX - rect.left - size / 2) + 'px';
+        ink.style.top = (e.clientY - rect.top - size / 2) + 'px';
+        el.appendChild(ink);
+        setTimeout(() => ink.remove(), 700);
+      });
+    });
+  };
+
+  // ========== 3D TILT on catalog cards ==========
+  const initTilt = (root = document) => {
+    const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const isTouch = window.matchMedia?.('(hover: none)').matches;
+    if (prefersReduced || isTouch) return;
+
+    root.querySelectorAll('main.catalog .item').forEach(card => {
+      if (card.dataset.tiltReady === '1') return;
+      card.dataset.tiltReady = '1';
+
+      let rafId = null;
+      const onMove = e => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+        const rx = (0.5 - y) * 6;   // max 6deg
+        const ry = (x - 0.5) * 8;   // max 8deg
+        card.style.setProperty('--mx', (x * 100) + '%');
+        card.style.setProperty('--my', (y * 100) + '%');
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          card.style.transform = `perspective(1200px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
+        });
+      };
+      const onEnter = () => card.classList.add('is-tilting');
+      const onLeave = () => {
+        card.classList.remove('is-tilting');
+        if (rafId) cancelAnimationFrame(rafId);
+        card.style.transform = '';
+      };
+      card.addEventListener('pointerenter', onEnter);
+      card.addEventListener('pointermove', onMove);
+      card.addEventListener('pointerleave', onLeave);
+    });
+  };
+
+  // ========== PARALLAX on hero ==========
+  const initParallax = () => {
+    const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+    const hero = document.getElementById('heroCinematic');
+    if (!hero) return;
+    const layers = Array.from(hero.querySelectorAll('[data-parallax]'));
+    if (!layers.length) return;
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const rect = hero.getBoundingClientRect();
+        const progress = rect.top; // negative when scrolling past
+        layers.forEach(layer => {
+          const rate = parseFloat(layer.dataset.parallax) || 0;
+          layer.style.transform = `translate3d(0, ${(-progress * rate).toFixed(2)}px, 0)`;
+        });
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  };
+
   initIntroSplash();
   initEmbeddedProductPage();
   renderCatalogFromData();
@@ -691,4 +815,15 @@ ${images}
   initWriteModal(document);
   initCopyNumber();
   initProductPreviewModal();
+  initThemeToggle();
+  initRipple(document);
+  initTilt(document);
+  initParallax();
+
+  // Re-init ripple & tilt after catalog/product preview rendered dynamically
+  const observer = new MutationObserver(() => {
+    initRipple(document);
+    initTilt(document);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 })();
