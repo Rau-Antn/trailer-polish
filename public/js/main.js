@@ -1081,6 +1081,36 @@ ${images}
 
   initIntroSplash();
   initEmbeddedProductPage();
+
+  // Active nav link based on current path
+  try {
+    const path = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    document.querySelectorAll('header nav a').forEach(a => {
+      const href = (a.getAttribute('href') || '').toLowerCase();
+      a.removeAttribute('style');
+      if (href === path || (path === '' && href === 'index.html')) a.classList.add('is-active');
+    });
+  } catch (e) {}
+
+  // Reveal-on-scroll
+  const initReveal = (root) => {
+    try {
+      const targets = (root || document).querySelectorAll('.trust-card, .product-card, .faq-item, .contact-item, .quiz-shell, .contact-card, .map-card');
+      targets.forEach(el => { if (!el.classList.contains('reveal')) el.classList.add('reveal'); });
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(en => {
+            if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        targets.forEach(el => { if (!el.classList.contains('in')) io.observe(el); });
+      } else {
+        targets.forEach(el => el.classList.add('in'));
+      }
+    } catch (e) {}
+  };
+  window.__initReveal = initReveal;
+
   showCatalogSkeletons(6);
   renderCatalogFromData();
   initGalleries(document);
@@ -1101,6 +1131,7 @@ ${images}
   initRipple(document);
   initTilt(document);
   initParallax();
+  initReveal(document);
 
   // Re-init ripple & tilt after catalog/product preview rendered dynamically
   const observer = new MutationObserver(() => {
@@ -1109,6 +1140,7 @@ ${images}
     initShareButton(document);
     initBlurUp(document);
     initCallbackForm();
+    initReveal(document);
   });
   observer.observe(document.body, { childList: true, subtree: true });
 })();
