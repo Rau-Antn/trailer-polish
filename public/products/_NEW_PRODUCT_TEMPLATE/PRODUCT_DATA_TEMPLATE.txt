@@ -1,0 +1,33 @@
+{
+  "slug": "new-product-slug",
+  "active": false,
+  "type": "Бортовой",
+  "length": "До 2,5 м",
+  "axles": "Одноосный",
+  "capacity": "До 750 кг",
+  "price": 79000,
+  "title": "Название нового товара",
+  "badges": [
+    "Оцинкованная рама",
+    "До 750 кг",
+    "В наличии"
+  ],
+  "stockNote": "Короткая пометка справа от цены",
+  "images": [
+    "products/new-product-slug/images/1.jpg",
+    "products/new-product-slug/images/2.jpg",
+    "products/new-product-slug/images/3.jpg"
+  ],
+  "description": "Первая строка описания.\nВторая строка описания.\nТретья строка описания.",
+  "specs": [
+    { "label": "Полная масса", "value": "750 кг" },
+    { "label": "Масса груза", "value": "600 кг" },
+    { "label": "Снаряжённая масса", "value": "150 кг" },
+    { "label": "Внутренние размеры", "value": "2500×1300 мм" }
+  ]
+}
+
+Важно:
+- чтобы товар показался в каталоге, поставьте "active": true
+- slug должен совпадать с именем папки товара
+- картинки должны реально лежать в папке images
