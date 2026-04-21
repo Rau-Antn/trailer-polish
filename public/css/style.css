@@ -2446,29 +2446,42 @@ body.light-theme .hero-cinematic h1{
 
 /* Rounded photos + soft spotlight on photo only */
 .item .gallery,
-.gallery{
-  border-radius:22px !important;
-  overflow:hidden;
-}
+.gallery{ border-radius:22px !important; overflow:hidden; }
 .item .gallery-stage,
-.gallery-stage{
-  border-radius:18px !important;
-  overflow:hidden;
-  position:relative;
-}
+.gallery-stage{ border-radius:18px !important; overflow:hidden; position:relative; }
 .item .gallery-stage img,
 .gallery-stage img,
-.gallery img{
-  border-radius:16px;
+.gallery img{ border-radius:16px; }
+
+/* Catalog cards: фото без белых полей, edge-to-edge со скруглением */
+main.catalog .item .gallery{
+  padding:0 !important;
+  border:1px solid rgba(255,255,255,.08);
+  background:#0e141c;
 }
+main.catalog .item .gallery-stage{
+  min-height:280px;
+  border-radius:22px !important;
+  background:#0e141c;
+}
+main.catalog .item .gallery-stage img,
+main.catalog .item .gallery img{
+  padding:0 !important;
+  object-fit:cover !important;
+  object-position:center !important;
+  border-radius:22px !important;
+  width:100% !important; height:100% !important;
+  inset:0 !important;
+}
+body.light-theme main.catalog .item .gallery,
+body.light-theme main.catalog .item .gallery-stage{ background:#eef2f8; }
+
 .item .gallery-stage::after{
   content:""; position:absolute; inset:0; pointer-events:none;
   border-radius:inherit;
-  background:radial-gradient(
-    260px circle at var(--mx,50%) var(--my,50%),
+  background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),
     rgba(130,216,255,.10), transparent 60%);
-  opacity:0; transition:opacity .35s;
-  z-index:3;
+  opacity:0; transition:opacity .35s; z-index:3;
 }
 .item .gallery-stage:hover::after{ opacity:1; }
 
