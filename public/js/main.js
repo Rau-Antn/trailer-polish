@@ -756,15 +756,35 @@ ${images}
   const initThemeToggle = () => {
     // Auto-inject toggle into headers that don't have one (about/contacts/product pages)
     document.querySelectorAll('header .header-inner').forEach(inner => {
-      if (inner.querySelector('.theme-toggle')) return;
-      const btn = document.createElement('button');
-      btn.className = 'theme-toggle';
-      btn.id = inner.closest('header').querySelector('#themeToggle') ? '' : 'themeToggle';
-      btn.type = 'button';
-      btn.setAttribute('aria-label', 'Переключить тему');
-      btn.title = 'Переключить тему';
-      btn.innerHTML = '<span class="theme-toggle-icon">🌙</span>';
-      inner.appendChild(btn);
+      // Гарантируем наличие ряда .header-actions-row для пары кнопок над меню
+      let row = inner.querySelector('.header-actions-row');
+      if (!row) {
+        row = document.createElement('div');
+        row.className = 'header-actions-row';
+        // Вставляем сразу после логотипа (или в начало), чтобы nav был ниже
+        const logo = inner.querySelector('.logo-wrap, .logo, a[href="/"], a[href="index.html"]');
+        if (logo && logo.parentNode === inner) inner.insertBefore(row, logo.nextSibling);
+        else inner.insertBefore(row, inner.firstChild);
+      }
+
+      // Если уже есть theme-toggle где-то в шапке — переносим его в row
+      let btn = inner.querySelector('.theme-toggle');
+      if (btn && btn.parentNode !== row) row.appendChild(btn);
+      if (!btn) {
+        btn = document.createElement('button');
+        btn.className = 'theme-toggle';
+        btn.id = inner.closest('header').querySelector('#themeToggle') ? '' : 'themeToggle';
+        btn.type = 'button';
+        btn.setAttribute('aria-label', 'Переключить тему');
+        btn.title = 'Переключить тему';
+        btn.innerHTML = '<span class="theme-toggle-icon">🌙</span><span class="btn-label">Тема</span>';
+        row.appendChild(btn);
+      } else if (!btn.querySelector('.btn-label')) {
+        const lbl = document.createElement('span');
+        lbl.className = 'btn-label';
+        lbl.textContent = 'Тема';
+        btn.appendChild(lbl);
+      }
     });
 
     const saved = (() => { try { return localStorage.getItem('site-theme'); } catch { return null; }})();
@@ -816,13 +836,23 @@ ${images}
       btn.setAttribute('aria-label', 'Поиск по товарам');
       btn.setAttribute('aria-expanded', 'false');
       btn.title = 'Поиск по товарам';
-      btn.innerHTML = '<span class="search-lottie" aria-hidden="true"></span>'
+      btn.innerHTML = '<span class="search-icon-wrap">'
+        + '<span class="search-lottie" aria-hidden="true"></span>'
         + '<svg class="search-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
-        + '<circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
+        + '<circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'
+        + '</span>'
+        + '<span class="btn-label">Поиск</span>';
 
-      const themeBtn = inner.querySelector('.theme-toggle');
-      if (themeBtn) inner.insertBefore(btn, themeBtn);
-      else inner.appendChild(btn);
+      // Вставляем в общий ряд кнопок над меню (перед .theme-toggle)
+      let row = inner.querySelector('.header-actions-row');
+      if (!row) {
+        row = document.createElement('div');
+        row.className = 'header-actions-row';
+        inner.insertBefore(row, inner.firstChild);
+      }
+      const themeBtn = row.querySelector('.theme-toggle');
+      if (themeBtn) row.insertBefore(btn, themeBtn);
+      else row.appendChild(btn);
 
       const pop = document.createElement('div');
       pop.className = 'search-popover';
