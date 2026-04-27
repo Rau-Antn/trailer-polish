@@ -756,15 +756,35 @@ ${images}
   const initThemeToggle = () => {
     // Auto-inject toggle into headers that don't have one (about/contacts/product pages)
     document.querySelectorAll('header .header-inner').forEach(inner => {
-      if (inner.querySelector('.theme-toggle')) return;
-      const btn = document.createElement('button');
-      btn.className = 'theme-toggle';
-      btn.id = inner.closest('header').querySelector('#themeToggle') ? '' : 'themeToggle';
-      btn.type = 'button';
-      btn.setAttribute('aria-label', 'Переключить тему');
-      btn.title = 'Переключить тему';
-      btn.innerHTML = '<span class="theme-toggle-icon">🌙</span>';
-      inner.appendChild(btn);
+      // Гарантируем наличие ряда .header-actions-row для пары кнопок над меню
+      let row = inner.querySelector('.header-actions-row');
+      if (!row) {
+        row = document.createElement('div');
+        row.className = 'header-actions-row';
+        // Вставляем сразу после логотипа (или в начало), чтобы nav был ниже
+        const logo = inner.querySelector('.logo-wrap, .logo, a[href="/"], a[href="index.html"]');
+        if (logo && logo.parentNode === inner) inner.insertBefore(row, logo.nextSibling);
+        else inner.insertBefore(row, inner.firstChild);
+      }
+
+      // Если уже есть theme-toggle где-то в шапке — переносим его в row
+      let btn = inner.querySelector('.theme-toggle');
+      if (btn && btn.parentNode !== row) row.appendChild(btn);
+      if (!btn) {
+        btn = document.createElement('button');
+        btn.className = 'theme-toggle';
+        btn.id = inner.closest('header').querySelector('#themeToggle') ? '' : 'themeToggle';
+        btn.type = 'button';
+        btn.setAttribute('aria-label', 'Переключить тему');
+        btn.title = 'Переключить тему';
+        btn.innerHTML = '<span class="theme-toggle-icon">🌙</span><span class="btn-label">Тема</span>';
+        row.appendChild(btn);
+      } else if (!btn.querySelector('.btn-label')) {
+        const lbl = document.createElement('span');
+        lbl.className = 'btn-label';
+        lbl.textContent = 'Тема';
+        btn.appendChild(lbl);
+      }
     });
 
     const saved = (() => { try { return localStorage.getItem('site-theme'); } catch { return null; }})();
