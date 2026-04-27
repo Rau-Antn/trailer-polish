@@ -848,6 +848,23 @@ ${images}
             autoplay: false,
             path: '/lottie/search.json',
           });
+          // Анимация при наведении
+          btn.addEventListener('mouseenter', () => {
+            try { lottieAnim.goToAndPlay(0, true); } catch (e) {}
+          });
+          btn.addEventListener('mouseleave', () => {
+            if (!pop.classList.contains('is-open')) {
+              try { lottieAnim.stop(); } catch (e) {}
+            }
+          });
+          btn.addEventListener('focus', () => {
+            try { lottieAnim.goToAndPlay(0, true); } catch (e) {}
+          });
+          btn.addEventListener('blur', () => {
+            if (!pop.classList.contains('is-open')) {
+              try { lottieAnim.stop(); } catch (e) {}
+            }
+          });
         } catch (e) { btn.classList.add('no-lottie'); }
       }).catch(() => btn.classList.add('no-lottie'));
 
