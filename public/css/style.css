@@ -2398,6 +2398,23 @@ body.light-theme .hero-cinematic h1{
   background:linear-gradient(180deg, #ffffff, #a0d0ff);
   -webkit-background-clip:text; background-clip:text;
   -webkit-text-fill-color:transparent;
+  color:transparent !important;
+}
+/* Hero всегда на тёмном фото — держим светлый текст и в light-теме */
+body.light-theme .hero-cinematic p,
+body.light-theme .hero-cinematic .eyebrow{
+  color:#e8f1fb !important;
+  text-shadow:0 2px 12px rgba(0,0,0,.55);
+}
+body.light-theme .hero-cinematic .btn-ghost{
+  color:#ffffff !important;
+  border-color:rgba(255,255,255,.45) !important;
+  background:rgba(255,255,255,.08) !important;
+  backdrop-filter:blur(6px);
+}
+body.light-theme .hero-cinematic .btn-ghost:hover{
+  background:rgba(255,255,255,.18) !important;
+  border-color:rgba(255,255,255,.7) !important;
 }
 
 /* ---------- RIPPLE & GLOW BUTTONS ---------- */
