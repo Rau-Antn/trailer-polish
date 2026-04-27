@@ -2233,31 +2233,79 @@ img{ -webkit-user-drag:none; }
    ripple/glow buttons, light theme
    ============================================================ */
 
-/* ---------- Theme toggle button ---------- */
+/* ---------- Header layout: actions row OVER nav ---------- */
+.header-inner{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.header-actions-row{
+  margin-left:auto;
+  order:1;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+}
+.header-inner > nav{
+  order:2;
+  flex-basis:100%;
+  width:100%;
+  margin-left:0;
+  margin-top:8px;
+  justify-content:flex-start;
+  border-top:1px solid rgba(255,255,255,.06);
+  padding-top:8px;
+}
+body.light-theme .header-inner > nav{ border-top-color:rgba(10,20,40,.08); }
+
+/* ---------- Theme toggle button (pill-on-hover) ---------- */
 .theme-toggle{
   position:relative;
-  width:40px; height:40px;
-  margin-left:auto;
-  border-radius:50%;
+  height:40px;
+  width:40px;
+  border-radius:999px;
   border:1px solid rgba(255,255,255,.12);
   background:rgba(255,255,255,.04);
   color:var(--text);
   cursor:pointer;
   display:inline-flex; align-items:center; justify-content:center;
+  gap:8px;
   font-size:18px;
-  transition:transform .35s cubic-bezier(.19,1,.22,1), background .3s, border-color .3s, box-shadow .3s;
+  padding:0;
+  overflow:hidden;
+  white-space:nowrap;
+  transition:width .35s cubic-bezier(.19,1,.22,1),
+             padding .35s cubic-bezier(.19,1,.22,1),
+             background .3s, border-color .3s, box-shadow .3s;
   backdrop-filter:blur(8px);
   flex-shrink:0;
 }
-.theme-toggle:hover{
-  transform:rotate(-15deg) scale(1.08);
-  border-color:rgba(130,216,255,.4);
-  background:rgba(130,216,255,.1);
-  box-shadow:0 8px 24px -8px rgba(69,185,255,.4);
+.theme-toggle .theme-toggle-icon{ flex:0 0 auto; line-height:1; }
+.theme-toggle .btn-label{
+  font-size:13px;
+  font-weight:500;
+  letter-spacing:.2px;
+  max-width:0;
+  opacity:0;
+  transform:translateX(-4px);
+  transition:max-width .35s cubic-bezier(.19,1,.22,1),
+             opacity .25s ease .05s,
+             transform .35s cubic-bezier(.19,1,.22,1);
+  pointer-events:none;
 }
-.header-inner{ display:flex; align-items:center; gap:12px; }
-.header-inner nav{ margin-left:auto; }
-.header-inner .theme-toggle{ margin-left:8px; }
+@media (hover:hover) and (pointer:fine){
+  .theme-toggle:hover{
+    width:auto;
+    padding:0 14px 0 12px;
+    border-color:rgba(130,216,255,.4);
+    background:rgba(130,216,255,.1);
+    box-shadow:0 8px 24px -8px rgba(69,185,255,.4);
+  }
+  .theme-toggle:hover .btn-label{
+    max-width:140px; opacity:1; transform:translateX(0);
+  }
+}
 
 /* ---------- LIGHT THEME ---------- */
 body.light-theme{
