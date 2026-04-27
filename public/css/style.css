@@ -2395,9 +2395,9 @@ body.light-theme .hero-bg-vignette{
   backdrop-filter:blur(8px);
 }
 body.light-theme .hero-cinematic h1{
-  background:linear-gradient(180deg, #ffffff, #a0d0ff);
-  -webkit-background-clip:text; background-clip:text;
-  -webkit-text-fill-color:transparent;
+  background:linear-gradient(180deg, #ffffff, #a0d0ff) !important;
+  -webkit-background-clip:text !important; background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
   color:transparent !important;
 }
 /* Hero всегда на тёмном фото — держим светлый текст и в light-теме */
