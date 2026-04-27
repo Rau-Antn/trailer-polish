@@ -3110,58 +3110,7 @@ body.light-theme nav a.is-active::after { background: linear-gradient(90deg, #2c
 body.light-theme .ico, body.light-theme .contact-icon img.ico { color: #2c8fd9; }
 body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
 
-/* ===== Search button + popover (header) ===== */
-.search-toggle{
-  margin-left:8px;
-  width:40px; height:40px;
-  display:inline-flex; align-items:center; justify-content:center;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:50%;
-  cursor:pointer;
-  transition:background .25s ease, border-color .25s ease, transform .2s ease, box-shadow .25s ease;
-  position:relative;
-  padding:0;
-  color:#cfe6ff;
-}
-.search-toggle:hover{
-  background:rgba(69,185,255,.12);
-  border-color:rgba(69,185,255,.45);
-  box-shadow:0 0 0 4px rgba(69,185,255,.08);
-  transform:scale(1.05);
-}
-.search-toggle:active{ transform:scale(0.96); }
-
-/* По умолчанию — статичная лупа */
-.search-toggle .search-fallback{
-  width:18px; height:18px;
-  display:block;
-  color:inherit;
-  transition:opacity .2s ease;
-}
-/* Lottie скрыт, появляется только при hover/focus/open */
-.search-toggle .search-lottie{
-  position:absolute;
-  inset:0;
-  width:100%; height:100%;
-  display:flex; align-items:center; justify-content:center;
-  pointer-events:none;
-  opacity:0;
-  transition:opacity .2s ease;
-}
-.search-toggle .search-lottie svg{ width:26px !important; height:26px !important; }
-
-.search-toggle:hover .search-lottie,
-.search-toggle:focus-visible .search-lottie,
-.search-toggle[aria-expanded="true"] .search-lottie{ opacity:1; }
-.search-toggle:hover .search-fallback,
-.search-toggle:focus-visible .search-fallback,
-.search-toggle[aria-expanded="true"] .search-fallback{ opacity:0; }
-
-/* Если lottie не загрузился — всегда показываем SVG */
-.search-toggle.no-lottie .search-lottie{ display:none; }
-.search-toggle.no-lottie .search-fallback{ opacity:1 !important; }
-
+/* ===== Search button + popover (header) — см. ниже актуальные стили ===== */
 /* ===== Search button (pill-on-hover) ===== */
 .search-toggle{
   position:relative;
