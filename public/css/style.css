@@ -3115,58 +3115,64 @@ body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
   width:24px; height:24px;
   flex:0 0 24px;
   display:inline-flex; align-items:center; justify-content:center;
+  transition:opacity .2s ease, width .35s cubic-bezier(.19,1,.22,1), flex-basis .35s cubic-bezier(.19,1,.22,1);
 }
 .search-toggle .search-fallback{
-  width:18px; height:18px;
+  width:20px; height:20px;
   display:block;
   color:inherit;
   transition:opacity .2s ease;
 }
+/* Lottie — большая область, перекрывающая всю кнопку при расширении */
 .search-toggle .search-lottie{
   position:absolute;
-  inset:0;
-  width:100%; height:100%;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:40px;
+  height:40px;
   display:flex; align-items:center; justify-content:center;
   pointer-events:none;
   opacity:0;
-  transition:opacity .2s ease;
+  transition:opacity .2s ease, width .35s cubic-bezier(.19,1,.22,1), height .35s cubic-bezier(.19,1,.22,1);
 }
-.search-toggle .search-lottie svg{ width:26px !important; height:26px !important; }
-.search-toggle .btn-label{
-  font-size:13px;
-  font-weight:500;
-  letter-spacing:.2px;
-  max-width:0;
-  opacity:0;
-  transform:translateX(-4px);
-  transition:max-width .35s cubic-bezier(.19,1,.22,1),
-             opacity .25s ease .05s,
-             transform .35s cubic-bezier(.19,1,.22,1);
-  pointer-events:none;
+.search-toggle .search-lottie svg,
+.search-toggle .search-lottie canvas{
+  width:100% !important;
+  height:100% !important;
+  display:block;
 }
+.search-toggle .btn-label{ display:none !important; }
 .search-toggle:active{ transform:scale(0.97); }
 
 @media (hover:hover) and (pointer:fine){
-  .search-toggle:hover{
-    width:auto;
-    padding:0 14px 0 10px;
+  .search-toggle:hover,
+  .search-toggle:focus-visible{
+    width:240px;
+    padding:0 8px;
     background:rgba(69,185,255,.12);
     border-color:rgba(69,185,255,.45);
     box-shadow:0 0 0 4px rgba(69,185,255,.08);
   }
-  .search-toggle:hover .btn-label{
-    max-width:140px; opacity:1; transform:translateX(0);
+  .search-toggle:hover .search-icon-wrap,
+  .search-toggle:focus-visible .search-icon-wrap{
+    opacity:0;
+    width:0; flex-basis:0;
+  }
+  .search-toggle:hover .search-lottie,
+  .search-toggle:focus-visible .search-lottie{
+    width:220px;
+    height:38px;
   }
 }
 .search-toggle[aria-expanded="true"]{
-  width:auto;
-  padding:0 14px 0 10px;
+  width:240px;
+  padding:0 8px;
   background:rgba(69,185,255,.12);
   border-color:rgba(69,185,255,.45);
 }
-.search-toggle[aria-expanded="true"] .btn-label{
-  max-width:140px; opacity:1; transform:translateX(0);
-}
+.search-toggle[aria-expanded="true"] .search-icon-wrap{ opacity:0; width:0; flex-basis:0; }
+.search-toggle[aria-expanded="true"] .search-lottie{ width:220px; height:38px; }
 
 /* Lottie показывается при hover/focus/open */
 .search-toggle:hover .search-lottie,
