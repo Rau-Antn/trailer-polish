@@ -790,6 +790,130 @@ ${images}
     });
   };
 
+  // ========== HEADER SEARCH (Lottie + product filter) ==========
+  let lottieLoadingPromise = null;
+  const ensureLottie = () => {
+    if (window.lottie) return Promise.resolve(window.lottie);
+    if (lottieLoadingPromise) return lottieLoadingPromise;
+    lottieLoadingPromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie_light.min.js';
+      s.async = true;
+      s.onload = () => resolve(window.lottie);
+      s.onerror = () => reject(new Error('lottie failed'));
+      document.head.appendChild(s);
+    });
+    return lottieLoadingPromise;
+  };
+
+  const initHeaderSearch = () => {
+    document.querySelectorAll('header .header-inner').forEach(inner => {
+      if (inner.querySelector('.search-toggle')) return;
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'search-toggle';
+      btn.setAttribute('aria-label', 'Поиск по товарам');
+      btn.setAttribute('aria-expanded', 'false');
+      btn.title = 'Поиск по товарам';
+      btn.innerHTML = '<span class="search-lottie" aria-hidden="true"></span>'
+        + '<svg class="search-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+        + '<circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
+
+      const themeBtn = inner.querySelector('.theme-toggle');
+      if (themeBtn) inner.insertBefore(btn, themeBtn);
+      else inner.appendChild(btn);
+
+      const pop = document.createElement('div');
+      pop.className = 'search-popover';
+      pop.setAttribute('role', 'dialog');
+      pop.setAttribute('aria-label', 'Поиск товаров');
+      pop.innerHTML = '<input type="search" inputmode="search" maxlength="80" placeholder="Поиск по названию прицепа…" aria-label="Поиск по товарам"/>'
+        + '<div class="search-results" role="listbox"></div>';
+      inner.appendChild(pop);
+
+      const input = pop.querySelector('input');
+      const results = pop.querySelector('.search-results');
+      let lottieAnim = null;
+
+      ensureLottie().then(lottie => {
+        const container = btn.querySelector('.search-lottie');
+        if (!container || !lottie) { btn.classList.add('no-lottie'); return; }
+        try {
+          lottieAnim = lottie.loadAnimation({
+            container,
+            renderer: 'svg',
+            loop: true,
+            autoplay: false,
+            path: '/lottie/search.json',
+          });
+        } catch (e) { btn.classList.add('no-lottie'); }
+      }).catch(() => btn.classList.add('no-lottie'));
+
+      const renderResults = (q) => {
+        const data = Array.isArray(window.PRODUCTS_DATA) ? window.PRODUCTS_DATA.filter(p => p && p.active !== false) : [];
+        const query = (q || '').trim().toLowerCase();
+        if (!query) {
+          results.innerHTML = '<div class="search-empty">Начните вводить название…</div>';
+          return;
+        }
+        const matches = data.filter(p => {
+          const t = (p.title || '').toLowerCase();
+          const type = (p.type || '').toLowerCase();
+          return t.includes(query) || type.includes(query);
+        }).slice(0, 8);
+        if (!matches.length) {
+          results.innerHTML = '<div class="search-empty">Ничего не найдено</div>';
+          return;
+        }
+        results.innerHTML = matches.map(p => {
+          const imgSrc = (p.images && p.images[0]) ? '/' + escapeHtml(p.images[0]) : '';
+          const price = p.price ? new Intl.NumberFormat('ru-RU').format(p.price) + ' ₽' : '';
+          return '<a href="/products/' + escapeHtml(p.slug) + '/" tabindex="0">'
+            + (imgSrc ? '<img src="' + imgSrc + '" alt="" loading="lazy"/>' : '')
+            + '<span class="sr-title"><strong>' + escapeHtml(p.title || '') + '</strong>'
+            + '<small>' + escapeHtml(p.type || '') + (price ? ' · ' + price : '') + '</small></span>'
+            + '</a>';
+        }).join('');
+      };
+
+      const open = () => {
+        if (pop.classList.contains('is-open')) return;
+        pop.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+        renderResults(input.value);
+        if (lottieAnim) { try { lottieAnim.goToAndPlay(0, true); } catch (e) {} }
+        setTimeout(() => input.focus(), 50);
+      };
+      const close = () => {
+        if (!pop.classList.contains('is-open')) return;
+        pop.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+        if (lottieAnim) { try { lottieAnim.stop(); } catch (e) {} }
+      };
+
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (pop.classList.contains('is-open')) close(); else open();
+      });
+      input.addEventListener('input', (e) => renderResults(e.target.value));
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') { close(); btn.focus(); }
+        if (e.key === 'ArrowDown') {
+          const first = results.querySelector('a');
+          if (first) { e.preventDefault(); first.focus(); }
+        }
+      });
+      pop.addEventListener('click', (e) => e.stopPropagation());
+      document.addEventListener('click', (e) => {
+        if (!pop.contains(e.target) && !btn.contains(e.target)) close();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') close();
+      });
+    });
+  };
+
   // ========== RIPPLE EFFECT on buttons ==========
   const initRipple = (root = document) => {
     const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
