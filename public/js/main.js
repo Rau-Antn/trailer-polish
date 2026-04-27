@@ -1125,6 +1125,7 @@ ${images}
   initCopyNumber();
   initProductPreviewModal();
   initThemeToggle();
+  initHeaderSearch();
   initQuiz();
   initShareButton(document);
   initBlurUp(document);
