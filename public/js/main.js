@@ -777,13 +777,12 @@ ${images}
         btn.type = 'button';
         btn.setAttribute('aria-label', 'Переключить тему');
         btn.title = 'Переключить тему';
-        btn.innerHTML = '<span class="theme-toggle-icon">🌙</span><span class="btn-label">Тема</span>';
+        btn.innerHTML = '<span class="theme-toggle-icon">🌙</span>';
         row.appendChild(btn);
-      } else if (!btn.querySelector('.btn-label')) {
-        const lbl = document.createElement('span');
-        lbl.className = 'btn-label';
-        lbl.textContent = 'Тема';
-        btn.appendChild(lbl);
+      } else {
+        // Удаляем старый label если был
+        const oldLbl = btn.querySelector('.btn-label');
+        if (oldLbl) oldLbl.remove();
       }
     });
 
