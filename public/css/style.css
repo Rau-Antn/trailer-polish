@@ -3106,23 +3106,27 @@ body.light-theme .search-toggle .search-fallback{ color:#2c8fd9; }
 body.light-theme .search-toggle .search-lottie path,
 body.light-theme .search-toggle .search-lottie g{ }
 
+/* Full-width top search bar */
 .search-popover{
-  position:absolute;
-  top:calc(100% + 10px);
-  right:0;
-  width:min(420px, calc(100vw - 24px));
-  background:rgba(13,20,32,.96);
-  border:1px solid rgba(69,185,255,.22);
-  border-radius:14px;
-  box-shadow:0 20px 60px -20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.02);
-  padding:12px;
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  z-index:120;
+  position:fixed;
+  top:0; left:0; right:0;
+  width:100%;
+  background:rgba(8,14,24,.92);
+  border:0;
+  border-bottom:1px solid rgba(69,185,255,.22);
+  border-radius:0;
+  box-shadow:0 12px 40px -10px rgba(0,0,0,.55);
+  padding:18px max(20px, calc((100vw - 1100px) / 2)) 20px;
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  z-index:1000;
   opacity:0;
-  transform:translateY(-6px);
+  transform:translateY(-12px);
   pointer-events:none;
-  transition:opacity .18s ease, transform .18s ease;
+  transition:opacity .22s ease, transform .22s ease;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
 }
 .search-popover.is-open{
   opacity:1;
@@ -3131,13 +3135,13 @@ body.light-theme .search-toggle .search-lottie g{ }
 }
 .search-popover input{
   width:100%;
-  height:42px;
-  padding:0 12px;
-  border-radius:10px;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.10);
+  height:54px;
+  padding:0 18px;
+  border-radius:12px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
   color:#e8f1fb;
-  font-size:15px;
+  font-size:17px;
   outline:none;
   transition:border-color .2s ease, background .2s ease;
 }
@@ -3148,12 +3152,12 @@ body.light-theme .search-toggle .search-lottie g{ }
 .search-popover input::placeholder{ color:rgba(207,230,255,.45); }
 
 .search-results{
-  margin-top:10px;
-  max-height:50vh;
+  margin-top:0;
+  max-height:60vh;
   overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  gap:4px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+  gap:6px;
 }
 .search-results a{
   display:flex; align-items:center; gap:10px;
@@ -3216,9 +3220,10 @@ body.light-theme .search-empty{ color:rgba(26,35,50,.55); }
 /* Make logo-wrap relative so popover positions to header-inner instead */
 .header-inner{ position:relative; }
 
-@media (max-width: 520px){
+@media (max-width: 720px){
   .search-popover{
-    right:-4px;
-    width:calc(100vw - 16px);
+    padding:14px 14px 16px;
   }
+  .search-popover input{ height:48px; font-size:16px; }
+  .search-results{ grid-template-columns:1fr; max-height:65vh; }
 }
