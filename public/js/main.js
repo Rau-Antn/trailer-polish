@@ -836,10 +836,10 @@ ${images}
       btn.setAttribute('aria-expanded', 'false');
       btn.title = 'Поиск по товарам';
       btn.innerHTML = '<span class="search-icon-wrap">'
-        + '<span class="search-lottie" aria-hidden="true"></span>'
         + '<svg class="search-fallback" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
         + '<circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'
         + '</span>'
+        + '<span class="search-lottie" aria-hidden="true"></span>'
         + '<span class="btn-label">Поиск</span>';
 
       // Вставляем в общий ряд кнопок над меню (перед .theme-toggle)
