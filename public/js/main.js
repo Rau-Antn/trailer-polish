@@ -828,9 +828,10 @@ ${images}
       pop.className = 'search-popover';
       pop.setAttribute('role', 'dialog');
       pop.setAttribute('aria-label', 'Поиск товаров');
-      pop.innerHTML = '<input type="search" inputmode="search" maxlength="80" placeholder="Поиск по названию прицепа…" aria-label="Поиск по товарам"/>'
+      pop.innerHTML = '<button type="button" class="search-close" aria-label="Закрыть поиск">×</button>'
+        + '<input type="search" inputmode="search" maxlength="80" placeholder="Поиск по названию прицепа…" aria-label="Поиск по товарам"/>'
         + '<div class="search-results" role="listbox"></div>';
-      inner.appendChild(pop);
+      document.body.appendChild(pop);
 
       const input = pop.querySelector('input');
       const results = pop.querySelector('.search-results');
@@ -896,6 +897,8 @@ ${images}
         e.stopPropagation();
         if (pop.classList.contains('is-open')) close(); else open();
       });
+      const closeBtn = pop.querySelector('.search-close');
+      if (closeBtn) closeBtn.addEventListener('click', (e) => { e.stopPropagation(); close(); });
       input.addEventListener('input', (e) => renderResults(e.target.value));
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') { close(); btn.focus(); }
