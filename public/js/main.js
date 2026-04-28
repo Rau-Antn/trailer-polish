@@ -897,23 +897,137 @@ ${images}
         } catch (e) { btn.classList.add('no-lottie'); }
       }).catch(() => btn.classList.add('no-lottie'));
 
+      // Словарь синонимов: ключ — что вводит пользователь, значения — на что расширяем
+      const SEARCH_SYNONYMS = {
+        'лодка': ['лодочн', 'лодк', 'плавсредств', 'катер'],
+        'лодки': ['лодочн', 'лодк'],
+        'лодочный': ['лодочн', 'лодк'],
+        'катер': ['лодочн', 'катер'],
+        'мото': ['мотоцикл', 'мото', 'снегоход', 'квадроцикл'],
+        'мотоцикл': ['мотоцикл', 'мото'],
+        'квадрик': ['квадроцикл', 'квадрик', 'atv'],
+        'квадроцикл': ['квадроцикл', 'atv'],
+        'снегоход': ['снегоход'],
+        'машина': ['автовоз', 'легков', 'авто'],
+        'авто': ['автовоз', 'легков', 'авто'],
+        'легковой': ['легков'],
+        'грузовой': ['грузов', 'бортов'],
+        'борт': ['бортов', 'борт'],
+        'бортовой': ['бортов'],
+        'самосвал': ['самосвал'],
+        'крытый': ['кофр', 'фургон', 'крыт', 'тент'],
+        'фургон': ['фургон', 'кофр', 'крыт'],
+        'кофр': ['кофр'],
+        'тент': ['тент', 'крыт'],
+        'дача': ['дачн', 'хозяйств'],
+        'дачный': ['дачн'],
+        'строй': ['строит', 'грузов'],
+        'охота': ['охот', 'рыбалк'],
+        'рыбалка': ['рыбалк', 'лодочн', 'лодк'],
+        'двухосный': ['двухосн', '2-осн'],
+        'одноосный': ['одноосн', '1-осн'],
+        'прицеп': [''], // любой
+        'трейлер': [''],
+      };
+
+      // Извлекает все числа из строки (для поиска по размерам типа 1850, 185, 250 и т.п.)
+      const extractNumbers = (str) => {
+        const m = String(str || '').match(/\d{2,5}/g);
+        return m || [];
+      };
+
+      // Нормализация: убираем лишнее, приводим к нижнему регистру, заменяем разделители
+      const normalize = (s) => String(s || '')
+        .toLowerCase()
+        .replace(/ё/g, 'е')
+        .replace(/[×x✕✖]/g, 'x')
+        .replace(/[^\wа-я0-9x\s.,-]/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      // Собирает «поисковое поле» товара — всё, по чему ищем
+      const buildHaystack = (p) => {
+        const parts = [
+          p.title, p.type, p.length, p.axles, p.capacity,
+          p.description, p.stockNote, p.slug
+        ];
+        if (Array.isArray(p.badges)) parts.push(p.badges.join(' '));
+        if (Array.isArray(p.specs)) {
+          p.specs.forEach(s => { parts.push(s.label); parts.push(s.value); });
+        }
+        return normalize(parts.filter(Boolean).join(' '));
+      };
+
+      // Считает релевантность совпадения для одного товара
+      const scoreProduct = (p, tokens, numbers) => {
+        const title = normalize(p.title);
+        const type = normalize(p.type);
+        const hay = buildHaystack(p);
+        let score = 0;
+        let matched = 0;
+
+        tokens.forEach(tok => {
+          if (!tok) return;
+          // Расширяем синонимами
+          const variants = new Set([tok]);
+          const syn = SEARCH_SYNONYMS[tok];
+          if (syn) syn.forEach(v => v && variants.add(v));
+          // также пробуем «обрезанные» формы (стемминг по-простому)
+          if (tok.length > 4) variants.add(tok.slice(0, tok.length - 1));
+          if (tok.length > 5) variants.add(tok.slice(0, tok.length - 2));
+
+          let tokenMatched = false;
+          variants.forEach(v => {
+            if (!v || v.length < 2) return;
+            if (title.includes(v)) { score += 10; tokenMatched = true; }
+            else if (type.includes(v)) { score += 6; tokenMatched = true; }
+            else if (hay.includes(v)) { score += 3; tokenMatched = true; }
+          });
+          if (tokenMatched) matched++;
+        });
+
+        // Поиск по числам (размеры): 185, 1850, 250×127 и т.д.
+        const prodNumbers = extractNumbers(hay);
+        numbers.forEach(n => {
+          if (prodNumbers.includes(n)) { score += 8; matched++; }
+          else if (prodNumbers.some(pn => pn.startsWith(n) || n.startsWith(pn))) {
+            score += 4; matched++;
+          }
+        });
+
+        return { score, matched };
+      };
+
       const renderResults = (q) => {
         const data = Array.isArray(window.PRODUCTS_DATA) ? window.PRODUCTS_DATA.filter(p => p && p.active !== false) : [];
-        const query = (q || '').trim().toLowerCase();
-        if (!query) {
-          results.innerHTML = '<div class="search-empty">Начните вводить название…</div>';
+        const queryRaw = (q || '').trim();
+        if (!queryRaw) {
+          results.innerHTML = '<div class="search-empty">Начните вводить название, тип или размер…</div>';
           return;
         }
-        const matches = data.filter(p => {
-          const t = (p.title || '').toLowerCase();
-          const type = (p.type || '').toLowerCase();
-          return t.includes(query) || type.includes(query);
-        }).slice(0, 8);
-        if (!matches.length) {
-          results.innerHTML = '<div class="search-empty">Ничего не найдено</div>';
+        const query = normalize(queryRaw);
+        // Разбиваем на токены (слова + числа отдельно)
+        const tokens = query.split(/[\s,.-]+/).filter(t => t && t.length >= 2 && !/^\d+$/.test(t));
+        const numbers = query.match(/\d{2,5}/g) || [];
+
+        const totalCriteria = tokens.length + numbers.length;
+        if (!totalCriteria) {
+          results.innerHTML = '<div class="search-empty">Уточните запрос…</div>';
           return;
         }
-        results.innerHTML = matches.map(p => {
+
+        const scored = data.map(p => ({ p, ...scoreProduct(p, tokens, numbers) }))
+          .filter(x => x.score > 0)
+          // требуем чтобы совпало хотя бы половина критериев (но минимум 1)
+          .filter(x => x.matched >= Math.max(1, Math.ceil(totalCriteria / 2)))
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 8);
+
+        if (!scored.length) {
+          results.innerHTML = '<div class="search-empty">Ничего не найдено. Попробуйте: «лодочный», «бортовой», «250», «750 кг»</div>';
+          return;
+        }
+        results.innerHTML = scored.map(({ p }) => {
           const imgSrc = (p.images && p.images[0]) ? '/' + escapeHtml(p.images[0]) : '';
           const price = p.price ? new Intl.NumberFormat('ru-RU').format(p.price) + ' ₽' : '';
           return '<a href="/products/' + escapeHtml(p.slug) + '/" tabindex="0">'
