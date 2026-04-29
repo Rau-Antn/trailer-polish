@@ -358,68 +358,8 @@ ${images}
     catalog.innerHTML = html;
   };
 
-  const initFilters = () => {
-    const catalog = document.querySelector('main.catalog');
-    const items = catalog ? Array.from(catalog.querySelectorAll('.item')) : [];
-    const typeChecks = Array.from(document.querySelectorAll('input[name="type"]'));
-    const lengthFilter = document.getElementById('lengthFilter');
-    const axlesFilter = document.getElementById('axlesFilter');
-    const capacityFilter = document.getElementById('capacityFilter');
-    const priceFilter = document.getElementById('priceFilter');
-    const priceValue = document.getElementById('priceValue');
-    const sortFilter = document.getElementById('sortFilter');
-    const resetFilters = document.getElementById('resetFilters');
-    const filterCount = document.getElementById('filterCount');
-
-    if (!catalog || !items.length || !typeChecks.length || !priceFilter) return;
-    if (catalog.dataset.filtersReady === '1') return;
-    catalog.dataset.filtersReady = '1';
-
-    function formatPrice(value){ return new Intl.NumberFormat('ru-RU').format(value) + ' ₽'; }
-    function updatePriceLabel(){ if (priceValue && priceFilter) priceValue.textContent = formatPrice(Number(priceFilter.value)); }
-    function applyFilters(){
-      const activeTypes = typeChecks.filter(ch => ch.checked).map(ch => ch.value);
-      const length = lengthFilter?.value || '';
-      const axles = axlesFilter?.value || '';
-      const capacity = capacityFilter?.value || '';
-      const maxPrice = priceFilter ? Number(priceFilter.value) : Infinity;
-
-      let visibleItems = items.filter(item => {
-        const matchesType = activeTypes.length === 0 || activeTypes.includes(item.dataset.type);
-        const matchesLength = !length || item.dataset.length === length;
-        const matchesAxles = !axles || item.dataset.axles === axles;
-        const matchesCapacity = !capacity || item.dataset.capacity === capacity;
-        const matchesPrice = Number(item.dataset.price) <= maxPrice;
-        const show = matchesType && matchesLength && matchesAxles && matchesCapacity && matchesPrice;
-        item.classList.toggle('hidden', !show);
-        return show;
-      });
-
-      if (sortFilter?.value === 'asc') visibleItems.sort((a,b)=>Number(a.dataset.price)-Number(b.dataset.price));
-      else if (sortFilter?.value === 'desc') visibleItems.sort((a,b)=>Number(b.dataset.price)-Number(a.dataset.price));
-
-      visibleItems.forEach(item => catalog.appendChild(item));
-      items.filter(item => item.classList.contains('hidden')).forEach(item => catalog.appendChild(item));
-      if (filterCount) filterCount.textContent = 'Найдено: ' + visibleItems.length;
-    }
-
-    typeChecks.forEach(ch => ch.addEventListener('change', applyFilters));
-    [lengthFilter, axlesFilter, capacityFilter, sortFilter].forEach(el => el?.addEventListener('change', applyFilters));
-    priceFilter.addEventListener('input', () => { updatePriceLabel(); applyFilters(); });
-    resetFilters?.addEventListener('click', () => {
-      typeChecks.forEach(ch => ch.checked = false);
-      if (lengthFilter) lengthFilter.value = '';
-      if (axlesFilter) axlesFilter.value = '';
-      if (capacityFilter) capacityFilter.value = '';
-      priceFilter.value = '500000';
-      if (sortFilter) sortFilter.value = '';
-      updatePriceLabel();
-      applyFilters();
-    });
-
-    updatePriceLabel();
-    applyFilters();
-  };
+  const initCatalogControls = () => {
+    const
 
   const initProductPreviewModal = () => {
     const links = Array.from(document.querySelectorAll('.open-product-modal'));
