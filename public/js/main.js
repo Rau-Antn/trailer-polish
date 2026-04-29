@@ -284,20 +284,32 @@
     return hasTitle && hasPrice && hasImages;
   };
 
+  const removeCatalogPlaceholder = () => {
+    const ph = document.getElementById('catalogDynamicPlaceholder');
+    if (ph && ph.parentNode) ph.parentNode.removeChild(ph);
+  };
+
   const renderCatalogFromData = () => {
     const catalog = document.querySelector('main.catalog');
+    if (!catalog) return;
     const data = Array.isArray(window.PRODUCTS_DATA) ? window.PRODUCTS_DATA : null;
-    if (!catalog || !data || catalog.dataset.catalogRendered === '1') return;
+    if (catalog.dataset.catalogRendered === '1') return;
+
+    if (!data) {
+      removeCatalogPlaceholder();
+      catalog.innerHTML = '<div class="catalog-empty-state">Не удалось загрузить каталог. Обновите страницу или свяжитесь с нами.</div>';
+      return;
+    }
     catalog.dataset.catalogRendered = '1';
 
     const visibleProducts = data.filter(canShowProduct);
     if (!visibleProducts.length) {
-      catalog.innerHTML = '<div class="catalog-empty">В каталоге пока нет активных товаров.</div>';
+      removeCatalogPlaceholder();
+      catalog.innerHTML = '<div class="catalog-empty-state">В каталоге пока нет активных товаров.</div>';
       return;
     }
 
     const html = visibleProducts.map(product => {
-      // Одна галерея на товар со всеми его фото (не повторять по числу картинок!)
       const galleryImages = product.images.map((innerSrc, innerIndex) =>
         `    <img alt="${escapeHtml((product.title || 'Товар') + ' ' + (innerIndex + 1))}" ${innerIndex === 0 ? 'class="active" ' : ''}src="${escapeHtml(innerSrc)}" ${innerIndex === 0 ? 'decoding="async" fetchpriority="high"' : 'loading="lazy" decoding="async" fetchpriority="low"'}/>`
       ).join('\n');
@@ -312,7 +324,12 @@ ${galleryImages}
       const badges = (product.badges || []).map((badge, index) => `<div class="badge${index === (product.badges || []).length - 1 && /в наличии/i.test(badge) ? ' badge-stock' : ''}">${escapeHtml(badge)}</div>`).join('');
       const description = escapeHtml(product.description || '').replace(/\n/g, '<br/>');
       const specs = (product.specs || []).map(spec => `<div class="spec-row"><span>${escapeHtml(spec.label)}</span><strong>${escapeHtml(spec.value)}</strong></div>`).join('');
-      return `<div class="item" data-axles="${escapeHtml(product.axles || '')}" data-capacity="${escapeHtml(product.capacity || '')}" data-length="${escapeHtml(product.length || '')}" data-price="${Number(product.price || 0)}" data-type="${escapeHtml(product.type || '')}">
+      // Поисковая строка для фильтра по тексту
+      const searchParts = [product.title, product.type, product.length, product.axles, product.capacity, product.description, product.stockNote, product.slug];
+      if (Array.isArray(product.badges)) searchParts.push(product.badges.join(' '));
+      if (Array.isArray(product.specs)) product.specs.forEach(s => { searchParts.push(s.label); searchParts.push(s.value); });
+      const searchBlob = searchParts.filter(Boolean).join(' ').toLowerCase().replace(/ё/g, 'е');
+      return `<div class="item" data-axles="${escapeHtml(product.axles || '')}" data-capacity="${escapeHtml(product.capacity || '')}" data-length="${escapeHtml(product.length || '')}" data-price="${Number(product.price || 0)}" data-type="${escapeHtml(product.type || '')}" data-search="${escapeHtml(searchBlob)}">
 ${images}
 <div class="info">
   <div class="badges">${badges}</div>
@@ -337,8 +354,10 @@ ${images}
 </div>`;
     }).join('');
 
+    removeCatalogPlaceholder();
     catalog.innerHTML = html;
   };
+
 
   const initFilters = () => {
     const catalog = document.querySelector('main.catalog');
@@ -350,51 +369,130 @@ ${images}
     const priceFilter = document.getElementById('priceFilter');
     const priceValue = document.getElementById('priceValue');
     const sortFilter = document.getElementById('sortFilter');
-    const resetFilters = document.getElementById('resetFilters');
+    const resetBtn = document.getElementById('resetFilters');
     const filterCount = document.getElementById('filterCount');
+    const catalogFound = document.getElementById('catalogFound');
+    const filterToggle = document.getElementById('catalogFilterToggle');
+    const filterBadge = document.getElementById('catalogFilterBadge');
+    const filterPanel = document.getElementById('filters');
+    const applyBtn = document.getElementById('applyFilters');
+    const collapseLink = document.getElementById('collapseFilters');
+    const searchInput = document.getElementById('catalogSearchInput');
+    const searchClear = document.getElementById('catalogSearchClear');
 
     if (!catalog || !items.length || !typeChecks.length || !priceFilter) return;
     if (catalog.dataset.filtersReady === '1') return;
     catalog.dataset.filtersReady = '1';
 
-    function formatPrice(value){ return new Intl.NumberFormat('ru-RU').format(value) + ' ₽'; }
-    function updatePriceLabel(){ if (priceValue && priceFilter) priceValue.textContent = formatPrice(Number(priceFilter.value)); }
-    function applyFilters(){
+    const PRICE_MAX = Number(priceFilter.max || 500000);
+    const fmtPrice = (v) => new Intl.NumberFormat('ru-RU').format(v) + ' \u20bd';
+    const updatePriceLabel = () => { if (priceValue) priceValue.textContent = fmtPrice(Number(priceFilter.value)); };
+
+    const plural = (n) => {
+      const a = Math.abs(n) % 100, b = a % 10;
+      if (a > 10 && a < 20) return '\u043f\u0440\u0438\u0446\u0435\u043f\u043e\u0432';
+      if (b > 1 && b < 5) return '\u043f\u0440\u0438\u0446\u0435\u043f\u0430';
+      if (b === 1) return '\u043f\u0440\u0438\u0446\u0435\u043f';
+      return '\u043f\u0440\u0438\u0446\u0435\u043f\u043e\u0432';
+    };
+
+    const norm = (s) => String(s || '').toLowerCase().replace(/\u0451/g, '\u0435').replace(/[\u00d7x\u2715\u2716]/g, 'x').replace(/\s+/g, ' ').trim();
+
+    const countActive = () => {
+      let n = 0;
+      if (typeChecks.some(c => c.checked)) n++;
+      if (lengthFilter && lengthFilter.value) n++;
+      if (axlesFilter && axlesFilter.value) n++;
+      if (capacityFilter && capacityFilter.value) n++;
+      if (Number(priceFilter.value) < PRICE_MAX) n++;
+      if (sortFilter && sortFilter.value) n++;
+      return n;
+    };
+
+    const applyFilters = () => {
       const activeTypes = typeChecks.filter(ch => ch.checked).map(ch => ch.value);
-      const length = lengthFilter?.value || '';
-      const axles = axlesFilter?.value || '';
-      const capacity = capacityFilter?.value || '';
-      const maxPrice = priceFilter ? Number(priceFilter.value) : Infinity;
+      const length = lengthFilter ? lengthFilter.value : '';
+      const axles = axlesFilter ? axlesFilter.value : '';
+      const capacity = capacityFilter ? capacityFilter.value : '';
+      const maxPrice = Number(priceFilter.value);
+      const q = searchInput ? norm(searchInput.value) : '';
+      const tokens = q ? q.split(' ').filter(t => t.length >= 2) : [];
 
       let visibleItems = items.filter(item => {
-        const matchesType = activeTypes.length === 0 || activeTypes.includes(item.dataset.type);
-        const matchesLength = !length || item.dataset.length === length;
-        const matchesAxles = !axles || item.dataset.axles === axles;
-        const matchesCapacity = !capacity || item.dataset.capacity === capacity;
-        const matchesPrice = Number(item.dataset.price) <= maxPrice;
-        const show = matchesType && matchesLength && matchesAxles && matchesCapacity && matchesPrice;
+        const matchType = activeTypes.length === 0 || activeTypes.includes(item.dataset.type);
+        const matchLen = !length || item.dataset.length === length;
+        const matchAxl = !axles || item.dataset.axles === axles;
+        const matchCap = !capacity || item.dataset.capacity === capacity;
+        const matchPr = Number(item.dataset.price) <= maxPrice;
+        let matchSearch = true;
+        if (tokens.length) {
+          const hay = norm(item.dataset.search || '');
+          matchSearch = tokens.every(t => hay.includes(t));
+        }
+        const show = matchType && matchLen && matchAxl && matchCap && matchPr && matchSearch;
         item.classList.toggle('hidden', !show);
         return show;
       });
 
-      if (sortFilter?.value === 'asc') visibleItems.sort((a,b)=>Number(a.dataset.price)-Number(b.dataset.price));
-      else if (sortFilter?.value === 'desc') visibleItems.sort((a,b)=>Number(b.dataset.price)-Number(a.dataset.price));
+      if (sortFilter && sortFilter.value === 'asc') visibleItems.sort((a, b) => Number(a.dataset.price) - Number(b.dataset.price));
+      else if (sortFilter && sortFilter.value === 'desc') visibleItems.sort((a, b) => Number(b.dataset.price) - Number(a.dataset.price));
 
       visibleItems.forEach(item => catalog.appendChild(item));
       items.filter(item => item.classList.contains('hidden')).forEach(item => catalog.appendChild(item));
-      if (filterCount) filterCount.textContent = 'Найдено: ' + visibleItems.length;
-    }
 
+      const n = visibleItems.length;
+      const txt = '\u041d\u0430\u0439\u0434\u0435\u043d\u043e: ' + n + ' ' + plural(n);
+      if (filterCount) filterCount.textContent = txt;
+      if (catalogFound) catalogFound.textContent = txt;
+      if (applyBtn) applyBtn.innerHTML = '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u044c ' + n + ' ' + plural(n);
+
+      const ac = countActive();
+      if (filterBadge) {
+        filterBadge.hidden = ac === 0;
+        filterBadge.textContent = String(ac);
+      }
+      if (searchClear) searchClear.hidden = !(searchInput && searchInput.value.length > 0);
+    };
+
+    // --- filter toggle (collapsible) ---
+    const togglePanel = (forceOpen) => {
+      if (!filterPanel) return;
+      const open = typeof forceOpen === 'boolean' ? forceOpen : filterPanel.classList.contains('is-collapsed');
+      filterPanel.classList.toggle('is-collapsed', !open);
+      filterPanel.setAttribute('aria-hidden', String(!open));
+      if (filterToggle) filterToggle.setAttribute('aria-expanded', String(open));
+    };
+
+    if (filterToggle) filterToggle.addEventListener('click', () => togglePanel());
+    if (collapseLink) collapseLink.addEventListener('click', () => togglePanel(false));
+    if (applyBtn) applyBtn.addEventListener('click', () => togglePanel(false));
+
+    // --- event listeners ---
     typeChecks.forEach(ch => ch.addEventListener('change', applyFilters));
-    [lengthFilter, axlesFilter, capacityFilter, sortFilter].forEach(el => el?.addEventListener('change', applyFilters));
+    [lengthFilter, axlesFilter, capacityFilter, sortFilter].forEach(el => el && el.addEventListener('change', applyFilters));
     priceFilter.addEventListener('input', () => { updatePriceLabel(); applyFilters(); });
-    resetFilters?.addEventListener('click', () => {
+
+    if (searchInput) {
+      let debounce;
+      searchInput.addEventListener('input', () => {
+        clearTimeout(debounce);
+        debounce = setTimeout(applyFilters, 180);
+      });
+    }
+    if (searchClear) searchClear.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      applyFilters();
+      if (searchInput) searchInput.focus();
+    });
+
+    if (resetBtn) resetBtn.addEventListener('click', () => {
       typeChecks.forEach(ch => ch.checked = false);
       if (lengthFilter) lengthFilter.value = '';
       if (axlesFilter) axlesFilter.value = '';
       if (capacityFilter) capacityFilter.value = '';
-      priceFilter.value = '500000';
+      priceFilter.value = String(PRICE_MAX);
       if (sortFilter) sortFilter.value = '';
+      if (searchInput) searchInput.value = '';
       updatePriceLabel();
       applyFilters();
     });

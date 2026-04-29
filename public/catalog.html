@@ -2,7 +2,28 @@
 <html lang="ru"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>Каталог прицепов — Мир прицепов Омск</title><meta content="Каталог легковых прицепов в Омске: бортовые и специализированные модели, фильтры по цене, длине, осям и грузоподъёмности." name="description"/><meta content="#0b1017" name="theme-color"/><meta content="telephone=no" name="format-detection"/><link href="favicon.png" rel="icon" type="image/png"/><link href="css/style.css" rel="stylesheet"/></head><body><header><div class="header-inner"><div class="logo-wrap"><div class="logo-headlight"><img alt="Логотип Мир прицепов Омск" class="logo" decoding="async" fetchpriority="high" onerror="this.style.display='none'; this.closest('.logo-wrap').querySelector('.brand-fallback').style.display='inline-flex'; this.parentElement.style.display='none';" src="logo.png"/><span aria-hidden="true" class="headlight-overlay"><span class="headlight-anchor" aria-hidden="true"><span class="headlight-core"></span><span class="headlight-glow"></span><span class="headlight-beam"></span></span></span></div><div class="brand-fallback">МИР ПРИЦЕПОВ · ОМСК</div></div><nav><a href="index.html">Главная</a>
 <a href="catalog.html" style="background:rgba(69,185,255,.08);border-color:rgba(69,185,255,.18);">Каталог</a>
 <a href="about.html">О компании</a>
-<a href="contacts.html">Контакты</a></nav><button aria-label="Переключить тему" class="theme-toggle" id="themeToggle" title="Переключить тему" type="button"><span class="theme-toggle-icon">🌙</span></button></div></header><section class="filters-wrap" id="filters">
+<a href="contacts.html">Контакты</a></nav><button aria-label="Переключить тему" class="theme-toggle" id="themeToggle" title="Переключить тему" type="button"><span class="theme-toggle-icon">🌙</span></button></div></header>
+<section class="catalog-top" id="catalogTop">
+  <div class="catalog-top-inner">
+    <h1 class="catalog-title">Каталог прицепов</h1>
+    <div class="catalog-search">
+      <span class="catalog-search-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </span>
+      <input id="catalogSearchInput" type="search" inputmode="search" maxlength="80" autocomplete="off" placeholder="Найти прицеп по модели или размеру" aria-label="Поиск по каталогу"/>
+      <button type="button" class="catalog-search-clear" id="catalogSearchClear" aria-label="Очистить поиск" hidden>×</button>
+    </div>
+    <div class="catalog-toolbar">
+      <button type="button" class="catalog-filter-toggle" id="catalogFilterToggle" aria-expanded="false" aria-controls="filters">
+        <span class="cft-label">Фильтр</span>
+        <span class="cft-badge" id="catalogFilterBadge" hidden>0</span>
+        <svg class="cft-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="catalog-found" id="catalogFound">Найдено: …</div>
+    </div>
+  </div>
+</section>
+<section class="filters-wrap is-collapsed" id="filters" aria-hidden="true">
 <div class="filters">
 <div class="filters-head">
 <div>
@@ -64,9 +85,10 @@
 </select>
 </div>
 </div>
-<div class="filter-actions">
-<div class="filter-note">Фильтр работает прямо на странице и мгновенно обновляет каталог.</div>
-<button class="filter-reset" id="resetFilters" type="button">Сбросить фильтр</button>
+<div class="filter-actions filter-actions-new">
+<button class="filter-reset" id="resetFilters" type="button">Сбросить</button>
+<button class="filter-apply" id="applyFilters" type="button">Показать <span id="applyCount">0</span> прицепов</button>
+<button class="filter-collapse-link" id="collapseFilters" type="button">Свернуть фильтр <span aria-hidden="true">↑</span></button>
 </div>
 </div>
 </section><main class="catalog" id="catalog"><div class="catalog-dynamic-placeholder" id="catalogDynamicPlaceholder">Каталог загружается…</div></main>
