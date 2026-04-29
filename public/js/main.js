@@ -510,16 +510,10 @@ ${images}
       const modalHtml = `
         <div class="product-preview-modal" id="productPreviewModal" aria-hidden="true">
           <div class="product-preview-backdrop"></div>
-          <div class="product-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="productPreviewTitle">
-            <div class="product-preview-header">
-              <div class="product-preview-headline">
-                <div class="product-preview-kicker">Карточка товара</div>
-                <strong class="product-preview-title" id="productPreviewTitle">Карточка товара</strong>
-              </div>
-              <div class="product-preview-actions">
-                <a class="product-preview-open" href="#" target="_self" rel="noopener">Открыть страницей</a>
-                <button class="product-preview-close" type="button" aria-label="Закрыть окно">×</button>
-              </div>
+          <div class="product-preview-dialog" role="dialog" aria-modal="true" aria-label="Карточка товара">
+            <div class="product-preview-header product-preview-header--minimal">
+              <a class="product-preview-open" href="#" target="_self" rel="noopener" hidden>Открыть страницей</a>
+              <button class="product-preview-close" type="button" aria-label="Закрыть окно">×</button>
             </div>
             <div class="product-preview-content-wrap">
               <div class="product-preview-loading">Загружаем карточку товара…</div>
