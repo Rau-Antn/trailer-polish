@@ -45,10 +45,10 @@
             isolation:isolate;
             cursor:pointer;
             background:
-                radial-gradient(circle at 50% 42%, rgba(69,185,255,.14), transparent 32%),
-                radial-gradient(circle at 50% 58%, rgba(216,179,106,.09), transparent 28%),
-                radial-gradient(circle at 20% 18%, rgba(255,255,255,.035), transparent 26%),
-                linear-gradient(180deg, #05080d 0%, #090c12 100%);
+                radial-gradient(ellipse 60% 40% at 38% 46%, rgba(69,185,255,.16), transparent 60%),
+                radial-gradient(ellipse 55% 38% at 64% 56%, rgba(232,142,58,.10), transparent 62%),
+                radial-gradient(circle at 18% 14%, rgba(255,255,255,.03), transparent 30%),
+                linear-gradient(180deg, #03060b 0%, #060911 55%, #04070c 100%);
             opacity:1;
             visibility:visible;
             transition:
