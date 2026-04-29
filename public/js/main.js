@@ -292,6 +292,9 @@
   const renderCatalogFromData = () => {
     const catalog = document.querySelector('main.catalog');
     if (!catalog) return;
+    // Не запускать рендер на страницах товара и не затирать готовую карточку
+    if (document.body.classList.contains('product-page')) return;
+    if (catalog.querySelector(':scope > .item')) return;
     const data = Array.isArray(window.PRODUCTS_DATA) ? window.PRODUCTS_DATA : null;
     if (catalog.dataset.catalogRendered === '1') return;
 
@@ -510,16 +513,10 @@ ${images}
       const modalHtml = `
         <div class="product-preview-modal" id="productPreviewModal" aria-hidden="true">
           <div class="product-preview-backdrop"></div>
-          <div class="product-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="productPreviewTitle">
-            <div class="product-preview-header">
-              <div class="product-preview-headline">
-                <div class="product-preview-kicker">Карточка товара</div>
-                <strong class="product-preview-title" id="productPreviewTitle">Карточка товара</strong>
-              </div>
-              <div class="product-preview-actions">
-                <a class="product-preview-open" href="#" target="_self" rel="noopener">Открыть страницей</a>
-                <button class="product-preview-close" type="button" aria-label="Закрыть окно">×</button>
-              </div>
+          <div class="product-preview-dialog" role="dialog" aria-modal="true" aria-label="Карточка товара">
+            <div class="product-preview-header product-preview-header--minimal">
+              <a class="product-preview-open" href="#" target="_self" rel="noopener" hidden>Открыть страницей</a>
+              <button class="product-preview-close" type="button" aria-label="Закрыть окно">×</button>
             </div>
             <div class="product-preview-content-wrap">
               <div class="product-preview-loading">Загружаем карточку товара…</div>
@@ -532,7 +529,7 @@ ${images}
     }
 
     const bodyEl = modal.querySelector('.product-preview-body');
-    const titleEl = modal.querySelector('.product-preview-title');
+    const titleEl = modal.querySelector('.product-preview-title'); // может отсутствовать
     const openFullLink = modal.querySelector('.product-preview-open');
     const closeBtn = modal.querySelector('.product-preview-close');
     const productCache = new Map();
@@ -720,8 +717,8 @@ ${images}
 
       modal.classList.add('open', 'is-loading');
       modal.setAttribute('aria-hidden', 'false');
-      titleEl.textContent = title || 'Карточка товара';
-      openFullLink.href = url;
+      if (titleEl) titleEl.textContent = title || 'Карточка товара';
+      if (openFullLink) openFullLink.href = url;
       bodyEl.innerHTML = '';
       bodyEl.scrollTop = 0;
       syncBodyLockState();
@@ -730,7 +727,7 @@ ${images}
         const result = await loadProductPage(url);
         if (currentRequestId !== requestId) return;
         bodyEl.innerHTML = result.html;
-        titleEl.textContent = result.title || title || 'Карточка товара';
+        if (titleEl) titleEl.textContent = result.title || title || 'Карточка товара';
         initGalleries(bodyEl);
         initTabs(bodyEl);
         initCallModal(bodyEl);
