@@ -777,6 +777,24 @@ ${images}
     const splash = document.getElementById('introSplash');
     if (!splash || !body.classList.contains('home-page')) return;
 
+    // Безопасная работа с sessionStorage
+    const safeStorage = {
+      get(key){ try { return window.sessionStorage.getItem(key); } catch(_) { return null; } },
+      set(key, val){ try { window.sessionStorage.setItem(key, val); } catch(_) {} }
+    };
+
+    const markFinished = () => {
+      body.classList.add('intro-finished');
+      safeStorage.set('introSplashSeen', '1');
+    };
+
+    // Если intro уже показывалось в этой сессии — сразу скрываем
+    if (safeStorage.get('introSplashSeen') === '1') {
+      splash.remove();
+      body.classList.add('intro-finished');
+      return;
+    }
+
     const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     body.classList.add('splash-active');
@@ -785,10 +803,17 @@ ${images}
     let autoTimer = null;
     let enterTimer = null;
 
+    const skipNow = () => closeSplash(true);
+
     const cleanup = () => {
       splash.removeEventListener('pointerdown', skipNow);
       splash.removeEventListener('touchstart', skipNow);
+      splash.removeEventListener('click', skipNow);
       document.removeEventListener('keydown', skipNow);
+      document.removeEventListener('touchstart', skipNow);
+      document.removeEventListener('pointerdown', skipNow);
+      window.removeEventListener('wheel', skipNow);
+      window.removeEventListener('scroll', skipNow);
       splash.style.pointerEvents = 'none';
       body.classList.remove('splash-active');
       syncBodyLockState();
@@ -802,31 +827,33 @@ ${images}
       if (immediate) splash.classList.add('is-skip');
       splash.classList.add('is-hiding');
       cleanup();
+      markFinished();
       window.setTimeout(() => {
-        splash.remove();
-      }, immediate ? 260 : 1750);
+        if (splash.parentNode) splash.remove();
+      }, immediate ? 260 : 1200);
     };
-
-    const skipNow = () => closeSplash(true);
 
     splash.addEventListener('pointerdown', skipNow, { passive: true });
     splash.addEventListener('touchstart', skipNow, { passive: true });
     splash.addEventListener('click', skipNow, { passive: true });
     document.addEventListener('keydown', skipNow);
-    window.addEventListener('wheel', skipNow, { passive: true, once: true });
+    document.addEventListener('touchstart', skipNow, { passive: true });
+    document.addEventListener('pointerdown', skipNow, { passive: true });
+    window.addEventListener('wheel', skipNow, { passive: true });
+    window.addEventListener('scroll', skipNow, { passive: true });
 
     if (reduceMotion) {
-      // Минимальный показ для пользователей с reduced-motion
       splash.classList.add('is-entered');
-      autoTimer = window.setTimeout(() => closeSplash(true), 500);
+      autoTimer = window.setTimeout(() => closeSplash(true), 400);
       return;
     }
 
     enterTimer = window.setTimeout(() => {
       splash.classList.add('is-entered');
-    }, 120);
+    }, 80);
 
-    autoTimer = window.setTimeout(() => closeSplash(false), 3400);
+    // Авто-закрытие через ~2.2 секунды
+    autoTimer = window.setTimeout(() => closeSplash(false), 2200);
   };
 
 
