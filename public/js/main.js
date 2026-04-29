@@ -358,8 +358,6 @@ ${images}
     catalog.innerHTML = html;
   };
 
-  const initCatalogControls = () => {
-    const
 
   const initProductPreviewModal = () => {
     const links = Array.from(document.querySelectorAll('.open-product-modal'));
