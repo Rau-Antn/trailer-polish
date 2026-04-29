@@ -3658,3 +3658,106 @@ body.light-theme .filter-actions-new .filter-collapse-link:hover{ background:#f1
   font-size:15px;
 }
 body.light-theme .catalog-empty-state{ color:#5a6678; }
+
+/* ============================================================
+   Intro Splash — premium light sweep across the logo (one-shot)
+   ============================================================ */
+.intro-splash__content{ overflow:hidden; border-radius:24px; }
+.intro-splash__content::after{
+  content:"";
+  position:absolute;
+  top:0; bottom:0;
+  left:-40%;
+  width:35%;
+  pointer-events:none;
+  z-index:5;
+  background:linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255,255,255,0) 20%,
+    rgba(255,225,190,.18) 45%,
+    rgba(255,255,255,.32) 50%,
+    rgba(190,225,255,.18) 55%,
+    rgba(255,255,255,0) 80%,
+    transparent 100%
+  );
+  filter:blur(6px);
+  mix-blend-mode:screen;
+  opacity:0;
+  transform:skewX(-14deg);
+}
+.intro-splash.is-entered .intro-splash__content::after{
+  animation:introShineSweep 1.6s cubic-bezier(.22,.61,.36,1) .35s 1 forwards;
+}
+@keyframes introShineSweep{
+  0%   { left:-40%; opacity:0; }
+  20%  { opacity:1; }
+  80%  { opacity:1; }
+  100% { left:115%; opacity:0; }
+}
+
+/* ============================================================
+   Header / Nav stagger reveal after intro (only on home page)
+   ============================================================ */
+body.home-page:not(.intro-finished) header{
+  opacity:0;
+  transform:translateY(-6px);
+}
+body.home-page:not(.intro-finished) .logo-wrap,
+body.home-page:not(.intro-finished) nav a,
+body.home-page:not(.intro-finished) .theme-toggle{
+  opacity:0;
+  transform:translateY(10px);
+}
+body.home-page.intro-finished header{
+  opacity:1;
+  transform:translateY(0);
+  transition:opacity .55s ease, transform .55s cubic-bezier(.22,.61,.36,1);
+}
+body.home-page.intro-finished .logo-wrap,
+body.home-page.intro-finished nav a,
+body.home-page.intro-finished .theme-toggle{
+  opacity:1;
+  transform:translateY(0);
+  transition:opacity .55s ease, transform .55s cubic-bezier(.22,.61,.36,1);
+}
+body.home-page.intro-finished .logo-wrap{ transition-delay:.05s; }
+body.home-page.intro-finished nav a:nth-child(1){ transition-delay:.20s; }
+body.home-page.intro-finished nav a:nth-child(2){ transition-delay:.28s; }
+body.home-page.intro-finished nav a:nth-child(3){ transition-delay:.36s; }
+body.home-page.intro-finished nav a:nth-child(4){ transition-delay:.44s; }
+body.home-page.intro-finished nav a:nth-child(5){ transition-delay:.52s; }
+body.home-page.intro-finished .theme-toggle{ transition-delay:.55s; }
+
+/* ============================================================
+   Hover underline — soft orange accent (overrides earlier blue)
+   ============================================================ */
+nav a::after{
+  background:linear-gradient(90deg, transparent, rgba(232,142,58,.85), transparent) !important;
+  box-shadow:0 0 8px rgba(232,142,58,.35);
+  transform-origin:left center !important;
+}
+nav a:hover::after{ transform:scaleX(1) !important; }
+
+/* Persistent orange indicator for active item (kept alongside the headlight glow) */
+nav a.is-active::after{
+  transform:scaleX(1) !important;
+  background:linear-gradient(90deg, transparent, rgba(232,142,58,1), transparent) !important;
+  box-shadow:0 0 10px rgba(232,142,58,.55);
+  height:2px;
+}
+
+/* ============================================================
+   Reduced motion — disable shine, stagger, complex intro fx
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+  .intro-splash__content::after{ display:none !important; }
+  body.home-page:not(.intro-finished) header,
+  body.home-page:not(.intro-finished) .logo-wrap,
+  body.home-page:not(.intro-finished) nav a,
+  body.home-page:not(.intro-finished) .theme-toggle{
+    opacity:1 !important;
+    transform:none !important;
+  }
+}
+
