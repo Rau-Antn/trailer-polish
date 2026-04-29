@@ -526,7 +526,7 @@ ${images}
     }
 
     const bodyEl = modal.querySelector('.product-preview-body');
-    const titleEl = modal.querySelector('.product-preview-title');
+    const titleEl = modal.querySelector('.product-preview-title'); // может отсутствовать
     const openFullLink = modal.querySelector('.product-preview-open');
     const closeBtn = modal.querySelector('.product-preview-close');
     const productCache = new Map();
