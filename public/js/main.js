@@ -286,59 +286,8 @@
 
   const renderCatalogFromData = () => {
     const catalog = document.querySelector('main.catalog');
-    const data = Array.isArray(window.PRODUCTS_DATA) ? window.PRODUCTS_DATA : null;
-    if (!catalog || !data || catalog.dataset.catalogRendered === '1') return;
-    catalog.dataset.catalogRendered = '1';
-
-    const visibleProducts = data.filter(canShowProduct);
-    if (!visibleProducts.length) {
-      catalog.innerHTML = '<div class="catalog-empty">В каталоге пока нет активных товаров.</div>';
-      return;
-    }
-
-    const html = visibleProducts.map(product => {
-      // Одна галерея на товар со всеми его фото (не повторять по числу картинок!)
-      const galleryImages = product.images.map((innerSrc, innerIndex) =>
-        `    <img alt="${escapeHtml((product.title || 'Товар') + ' ' + (innerIndex + 1))}" ${innerIndex === 0 ? 'class="active" ' : ''}src="${escapeHtml(innerSrc)}" ${innerIndex === 0 ? 'decoding="async" fetchpriority="high"' : 'loading="lazy" decoding="async" fetchpriority="low"'}/>`
-      ).join('\n');
-      const images = `
-<div class="gallery">
-  <div class="gallery-stage">
-${galleryImages}
-  </div>
-  <button class="prev" type="button">‹</button>
-  <button class="next" type="button">›</button>
-</div>`.trim();
-      const badges = (product.badges || []).map((badge, index) => `<div class="badge${index === (product.badges || []).length - 1 && /в наличии/i.test(badge) ? ' badge-stock' : ''}">${escapeHtml(badge)}</div>`).join('');
-      const description = escapeHtml(product.description || '').replace(/\n/g, '<br/>');
-      const specs = (product.specs || []).map(spec => `<div class="spec-row"><span>${escapeHtml(spec.label)}</span><strong>${escapeHtml(spec.value)}</strong></div>`).join('');
-      return `<div class="item" data-axles="${escapeHtml(product.axles || '')}" data-capacity="${escapeHtml(product.capacity || '')}" data-length="${escapeHtml(product.length || '')}" data-price="${Number(product.price || 0)}" data-type="${escapeHtml(product.type || '')}">
-${images}
-<div class="info">
-  <div class="badges">${badges}</div>
-  <h2>${escapeHtml(product.title || '')}</h2>
-  <div class="price-row">
-    <div class="price"><small>Цена</small><strong>${escapeHtml(formatCatalogPrice(product.price || 0))}</strong></div>
-    <div class="stock-note">${escapeHtml(product.stockNote || '')}</div>
-  </div>
-  <div class="cta-row">
-    <a class="cta cta-availability open-product-modal" href="products/${escapeHtml(product.slug)}/"><span>Смотреть карточку</span></a>
-    <button class="cta cta-call open-call-modal" type="button"><span>Позвонить</span></button>
-    <button class="cta cta-write open-write-modal" type="button"><span>Написать</span></button>
-  </div>
-  <div class="tabs">
-    <div class="tabs-head"><button class="tab-btn active" data-tab="desc" type="button">Описание</button><button class="tab-btn" data-tab="specs" type="button">Основные характеристики</button></div>
-    <div class="tabs-content">
-      <div class="tab-content active" data-content="desc"><div class="desc-box"><p>${description}</p></div></div>
-      <div class="tab-content" data-content="specs"><div class="spec-box">${specs}</div></div>
-    </div>
-  </div>
-</div>
-</div>`;
-    }).join('');
-
-    catalog.innerHTML = html;
-  };
+    if (!catalog) return;
+    const data = Array.isArray(window.PRODUCTS_DATA) ? window.PR
 
   const initFilters = () => {
     const catalog = document.querySelector('main.catalog');
