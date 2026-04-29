@@ -714,8 +714,8 @@ ${images}
 
       modal.classList.add('open', 'is-loading');
       modal.setAttribute('aria-hidden', 'false');
-      titleEl.textContent = title || 'Карточка товара';
-      openFullLink.href = url;
+      if (titleEl) titleEl.textContent = title || 'Карточка товара';
+      if (openFullLink) openFullLink.href = url;
       bodyEl.innerHTML = '';
       bodyEl.scrollTop = 0;
       syncBodyLockState();
@@ -724,7 +724,7 @@ ${images}
         const result = await loadProductPage(url);
         if (currentRequestId !== requestId) return;
         bodyEl.innerHTML = result.html;
-        titleEl.textContent = result.title || title || 'Карточка товара';
+        if (titleEl) titleEl.textContent = result.title || title || 'Карточка товара';
         initGalleries(bodyEl);
         initTabs(bodyEl);
         initCallModal(bodyEl);
