@@ -2024,8 +2024,34 @@ footer{content-visibility:auto;contain-intrinsic-size:900px auto}
 .product-preview-body-inner{
     min-height:100%;
 }
-.product-preview-body .item{
+.product-preview-body .item,
+.product-preview-body .product-preview-item{
     margin:0;
+    border:none;
+    background:transparent;
+    box-shadow:none;
+    padding:8px 4px 4px;
+}
+/* Минималистичный header модалки: только крестик в углу */
+.product-preview-header.product-preview-header--minimal{
+    position:absolute;
+    top:10px;
+    right:10px;
+    left:auto;
+    padding:0;
+    border:none;
+    background:transparent;
+    backdrop-filter:none;
+    z-index:5;
+    gap:0;
+}
+.product-preview-header--minimal .product-preview-close{
+    background:rgba(9,13,19,.55);
+    border-color:rgba(255,255,255,.14);
+    backdrop-filter:blur(6px);
+}
+.product-preview-header--minimal + .product-preview-content-wrap{
+    padding-top:6px;
 }
 .product-preview-modal.is-loading .product-preview-body{
     opacity:.06;
