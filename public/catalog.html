@@ -3,7 +3,27 @@
 <a href="catalog.html" style="background:rgba(69,185,255,.08);border-color:rgba(69,185,255,.18);">Каталог</a>
 <a href="about.html">О компании</a>
 <a href="contacts.html">Контакты</a></nav><button aria-label="Переключить тему" class="theme-toggle" id="themeToggle" title="Переключить тему" type="button"><span class="theme-toggle-icon">🌙</span></button></div></header>
-<section class="catalog-top" id="catalogTop"><div class="catalog-
+<section class="catalog-top" id="catalogTop">
+  <div class="catalog-top-inner">
+    <h1 class="catalog-title">Каталог прицепов</h1>
+    <div class="catalog-search">
+      <span class="catalog-search-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </span>
+      <input id="catalogSearchInput" type="search" inputmode="search" maxlength="80" autocomplete="off" placeholder="Найти прицеп по модели или размеру" aria-label="Поиск по каталогу"/>
+      <button type="button" class="catalog-search-clear" id="catalogSearchClear" aria-label="Очистить поиск" hidden>×</button>
+    </div>
+    <div class="catalog-toolbar">
+      <button type="button" class="catalog-filter-toggle" id="catalogFilterToggle" aria-expanded="false" aria-controls="filters">
+        <span class="cft-label">Фильтр</span>
+        <span class="cft-badge" id="catalogFilterBadge" hidden>0</span>
+        <svg class="cft-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="catalog-found" id="catalogFound">Найдено: …</div>
+    </div>
+  </div>
+</section>
+<section class="filters-wrap is-collapsed" id="filters" aria-hidden="true">
 <div class="filters">
 <div class="filters-head">
 <div>
