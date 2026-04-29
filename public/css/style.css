@@ -262,27 +262,33 @@
             font-weight:700;
         }
 
+        /* Glass capsule navigation */
         nav{
-            display:flex;
-            justify-content:flex-end;
+            display:inline-flex;
+            justify-content:center;
             align-items:center;
-            gap:6px;
-            flex-wrap:wrap;
+            gap:2px;
+            padding:5px;
+            border-radius:999px;
+            background:rgba(255,255,255,.04);
+            border:1px solid rgba(255,255,255,.08);
+            backdrop-filter:blur(12px);
+            -webkit-backdrop-filter:blur(12px);
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 4px 20px -8px rgba(0,0,0,.3);
         }
         nav a{
             text-decoration:none;
-            padding:8px 14px;
+            padding:7px 16px;
             border-radius:999px;
             border:1px solid transparent;
             color:#d9e8f6;
-            transition:.25s;
+            transition:color .25s ease, background .25s ease, box-shadow .25s ease;
             font-size:14px;
+            white-space:nowrap;
         }
         nav a:hover{
             color:#fff;
-            background:rgba(69,185,255,.08);
-            border-color:rgba(69,185,255,.18);
-            box-shadow:0 0 0 1px rgba(69,185,255,.08) inset;
+            background:rgba(255,255,255,.06);
         }
 
         .hero{
@@ -2250,8 +2256,8 @@ img{ -webkit-user-drag:none; }
 @media (max-width: 720px){
   .header-inner{ padding:6px 0; gap:8px; }
   .logo{ max-width:140px; max-height:42px; }
-  nav{ width:100%; justify-content:center; gap:4px; }
-  nav a{ padding:6px 10px; font-size:13px; }
+  nav{ gap:1px; padding:4px; }
+  nav a{ padding:6px 11px; font-size:13px; }
 }
 
 /* ============================================================
@@ -2259,31 +2265,38 @@ img{ -webkit-user-drag:none; }
    ripple/glow buttons, light theme
    ============================================================ */
 
-/* ---------- Header layout: actions row OVER nav ---------- */
+/* ---------- Header layout: logo · nav (center) · actions ---------- */
 .header-inner{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:16px;
   flex-wrap:wrap;
+  justify-content:space-between;
 }
-.header-actions-row{
-  margin-left:auto;
-  order:1;
+.header-inner > .logo-wrap{ order:1; }
+.header-inner > nav{
+  order:2;
+  margin:0 auto;
+}
+.header-actions-row,
+.header-inner > .theme-toggle{
+  order:3;
+  margin-left:0;
   display:inline-flex;
   align-items:center;
   gap:10px;
+  flex-shrink:0;
 }
-.header-inner > nav{
-  order:2;
-  flex-basis:100%;
-  width:100%;
-  margin-left:0;
-  margin-top:8px;
-  justify-content:flex-start;
-  border-top:1px solid rgba(255,255,255,.06);
-  padding-top:8px;
+/* Light theme capsule */
+body.light-theme nav{
+  background:rgba(10,20,40,.04);
+  border-color:rgba(10,20,40,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 4px 20px -8px rgba(10,20,40,.08);
 }
-body.light-theme .header-inner > nav{ border-top-color:rgba(10,20,40,.08); }
+body.light-theme nav a:hover{
+  background:rgba(13,124,200,.08);
+  color:#0b1017;
+}
 
 /* ---------- Theme toggle button (simple circle) ---------- */
 .theme-toggle{
@@ -3052,17 +3065,23 @@ img.ico { filter: none; }
 /* Contact-icon: replace emoji bg with svg */
 .contact-icon img.ico { width: 22px; height: 22px; }
 
-/* Active nav link */
-nav a.is-active { color: #fff; position: relative; }
-nav a.is-active::after {
-  content: ''; position: absolute; left: 14px; right: 14px; bottom: 6px; height: 2px;
-  background: linear-gradient(90deg, #82d8ff, transparent);
-  border-radius: 2px;
-  animation: navUnderline .4s ease-out;
+/* Active nav link — "headlight glow" matching the logo effect */
+nav a.is-active{
+  color:#ffffff;
+  position:relative;
+  background:radial-gradient(ellipse at center, rgba(130,216,255,.28) 0%, rgba(69,185,255,.08) 70%);
+  border-color:rgba(130,216,255,.38);
+  box-shadow:
+    0 0 18px rgba(69,185,255,.35),
+    inset 0 0 12px rgba(130,216,255,.18);
+  text-shadow:0 0 10px rgba(130,216,255,.55);
+  animation:navGlowPulse 3.2s ease-in-out infinite;
 }
-@keyframes navUnderline { from { transform: scaleX(0); transform-origin: left; } to { transform: scaleX(1); } }
-nav a { transition: color .25s ease, background .25s ease; }
-nav a:hover { color: #82d8ff; }
+@keyframes navGlowPulse{
+  0%,100%{ box-shadow:0 0 18px rgba(69,185,255,.35), inset 0 0 12px rgba(130,216,255,.18); }
+  50%{    box-shadow:0 0 24px rgba(69,185,255,.5),  inset 0 0 14px rgba(130,216,255,.25); }
+}
+nav a:hover{ color:#82d8ff; }
 
 /* Product card hover lift */
 .product-card { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .35s ease; }
@@ -3110,8 +3129,13 @@ nav a:hover { color: #82d8ff; }
 .trust-card .trust-ico { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: rgba(130,216,255,.08); border: 1px solid rgba(130,216,255,.2); margin-bottom: 12px; }
 .trust-card .trust-ico img { width: 22px; height: 22px; color: #82d8ff; }
 
-body.light-theme nav a.is-active { color: #0b1017; }
-body.light-theme nav a.is-active::after { background: linear-gradient(90deg, #2c8fd9, transparent); }
+body.light-theme nav a.is-active{
+  color:#0b1017;
+  background:radial-gradient(ellipse at center, rgba(13,124,200,.22) 0%, rgba(13,124,200,.05) 70%);
+  border-color:rgba(13,124,200,.38);
+  box-shadow:0 0 16px rgba(13,124,200,.28), inset 0 0 10px rgba(13,124,200,.15);
+  text-shadow:0 0 8px rgba(13,124,200,.35);
+}
 body.light-theme .ico, body.light-theme .contact-icon img.ico { color: #2c8fd9; }
 body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
 
