@@ -284,10 +284,15 @@
     return hasTitle && hasPrice && hasImages;
   };
 
+  const removeCatalogPlaceholder = () => {
+    const ph = document.getElementById('catalogDynamicPlaceholder');
+    if (ph && ph.parentNode) ph.parentNode.removeChild(ph);
+  };
+
   const renderCatalogFromData = () => {
     const catalog = document.querySelector('main.catalog');
     if (!catalog) return;
-    const data = Array.isArray(window.PRODUCTS_DATA) ? window.PR
+    const data = Array.isArray(window.PRODUCTS_DAT
 
   const initFilters = () => {
     const catalog = document.querySelector('main.catalog');
