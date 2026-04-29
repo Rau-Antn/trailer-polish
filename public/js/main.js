@@ -292,6 +292,9 @@
   const renderCatalogFromData = () => {
     const catalog = document.querySelector('main.catalog');
     if (!catalog) return;
+    // Не запускать рендер на страницах товара и не затирать готовую карточку
+    if (document.body.classList.contains('product-page')) return;
+    if (catalog.querySelector(':scope > .item')) return;
     const data = Array.isArray(window.PRODUCTS_DATA) ? window.PRODUCTS_DATA : null;
     if (catalog.dataset.catalogRendered === '1') return;
 
