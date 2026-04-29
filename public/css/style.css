@@ -3761,3 +3761,38 @@ nav a.is-active::after{
   }
 }
 
+/* ============================================================
+   Header actions pinned top-right (search + theme)
+   Mobile: bigger logo, actions stay pinned in the corner
+   ============================================================ */
+header{ position:sticky; }
+.header-inner{ position:relative; padding-right:108px; }
+.header-actions-row{
+  position:absolute !important;
+  top:4px;
+  right:8px;
+  margin:0 !important;
+  z-index:5;
+  gap:6px !important;
+}
+.header-actions-row .theme-toggle,
+.header-actions-row .search-toggle{
+  height:34px;
+  width:34px;
+  font-size:16px;
+}
+@media (max-width: 720px){
+  .header-inner{ padding-right:84px; padding-top:4px; }
+  .header-actions-row{ top:3px; right:6px; gap:4px !important; }
+  .header-actions-row .theme-toggle,
+  .header-actions-row .search-toggle{
+    height:30px; width:30px; font-size:14px;
+  }
+  /* Bigger logo on mobile */
+  .logo{ max-width:200px !important; max-height:64px !important; }
+}
+@media (max-width: 380px){
+  .logo{ max-width:170px !important; max-height:56px !important; }
+  .header-inner{ padding-right:74px; }
+}
+
