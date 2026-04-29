@@ -2148,7 +2148,9 @@ body.product-embed .item{
 }
 
         /* --- Header logo headlight animation overlay --- */
-.logo-wrap{overflow:visible;display:flex;align-items:center}
+.logo-wrap{overflow:visible;display:flex;align-items:center;text-decoration:none;color:inherit;cursor:pointer}
+a.logo-wrap:hover,a.logo-wrap:focus,a.logo-wrap:visited{text-decoration:none;color:inherit;outline:none}
+a.logo-wrap:focus-visible{outline:2px solid rgba(130,216,255,.6);outline-offset:4px;border-radius:8px}
 .logo-headlight{position:relative;display:inline-block;line-height:0;overflow:visible}
 .logo{display:block;width:auto;height:auto;max-width:360px;max-height:132px;object-fit:contain}
 .headlight-overlay{position:absolute;inset:0;pointer-events:none;z-index:3}
