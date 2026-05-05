@@ -2387,6 +2387,53 @@ body.light-theme .hero-bg-vignette{
   background:radial-gradient(circle at center, transparent 30%, rgba(255,255,255,.5) 100%);
 }
 
+/* ---- Light-theme: comprehensive readability fixes ---- */
+body.light-theme footer{ background:#fff !important; border-color:rgba(10,20,40,.08) !important; }
+body.light-theme footer h3{ color:#1a2332 !important; -webkit-text-fill-color:#1a2332 !important; }
+body.light-theme footer p{ color:#5a6878 !important; }
+
+body.light-theme .contact-section{ background:rgba(245,248,253,.98); }
+body.light-theme .contact-summary-item{
+  background:#ffffff !important;
+  border-color:rgba(10,20,40,.10) !important;
+}
+body.light-theme .contact-summary-item strong{ color:#1a2332 !important; -webkit-text-fill-color:#1a2332 !important; }
+body.light-theme .contact-summary-item p{ color:#5a6878 !important; }
+body.light-theme .contact-summary-item a{ color:#0d7cc8 !important; }
+body.light-theme .contact-summary-item a:hover{ color:#0a5a95 !important; }
+body.light-theme .contact-summary-item .contact-icon{
+  background:rgba(13,124,200,.08);
+  border-color:rgba(13,124,200,.2);
+}
+body.light-theme .contact-head p{ color:#5a6878 !important; }
+body.light-theme .contact-badge{ background:rgba(13,124,200,.08) !important; color:#0a5a95 !important; border-color:rgba(13,124,200,.2) !important; }
+body.light-theme .contact-links-card{ background:#fff !important; border-color:rgba(10,20,40,.08) !important; }
+
+body.light-theme .eyebrow{ color:#0a5a95 !important; -webkit-text-fill-color:#0a5a95 !important; }
+
+body.light-theme .review-card{ background:#ffffff; border-color:rgba(10,20,40,.08); }
+body.light-theme .review-card p{ color:#5a6878 !important; }
+body.light-theme .reviews-score span, body.light-theme .reviews-meta span{ color:#5a6878 !important; }
+
+body.light-theme .widget-shell{ background:#ffffff !important; border-color:rgba(10,20,40,.08) !important; }
+body.light-theme .widget-head h3{ color:#1a2332 !important; -webkit-text-fill-color:#1a2332 !important; }
+body.light-theme .widget-placeholder{ background:rgba(13,124,200,.04); border-color:rgba(13,124,200,.2); }
+body.light-theme .widget-placeholder strong{ color:#1a2332 !important; }
+body.light-theme .widget-placeholder p{ color:#5a6878 !important; }
+body.light-theme .widget-placeholder code{ background:rgba(10,20,40,.05); border-color:rgba(10,20,40,.08); color:#0a5a95; }
+body.light-theme .widget-note{ background:rgba(216,179,106,.08); border-color:rgba(216,179,106,.25); color:#7a5c1f; }
+
+body.light-theme .trust-card .trust-icon{ background:rgba(13,124,200,.06); border-color:rgba(13,124,200,.15); }
+
+body.light-theme .contact-action svg rect,
+body.light-theme .contact-action svg path{ stroke:#0d7cc8 !important; }
+body.light-theme .contact-action small{ color:#5a6878 !important; }
+
+body.light-theme .working-hours, body.light-theme .contact-section small{ color:#5a6878 !important; }
+
+body.light-theme .bottom-contact .contact-badge{ color:#0a5a95 !important; }
+
+
 /* ---------- CINEMATIC HERO + PARALLAX ---------- */
 .hero-cinematic{
   position:relative;
