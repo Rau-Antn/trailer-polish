@@ -3003,14 +3003,65 @@ body.light-theme .quiz-step h4 { color: #122036; }
 body.light-theme .quiz-head p { color: #46587a; }
 body.light-theme .quiz-option {
   background: #fff;
-  border-color: rgba(20,40,70,.1);
+  border: 2px solid rgba(20,40,70,.15);
   color: #1a2942;
+  box-shadow: 0 2px 8px rgba(10,20,40,.06);
 }
-body.light-theme .quiz-option:hover { background: #f3f8fd; border-color: #2c8fd9; }
-body.light-theme .quiz-option.selected { background: linear-gradient(135deg, rgba(44,143,217,.15), #fff); color: #0a1830; }
-body.light-theme .quiz-actions .qbtn { background: #f3f6fb; color: #1a2942; border-color: rgba(20,40,70,.1); }
-body.light-theme .quiz-result-card { background: #fff; border-color: rgba(44,143,217,.2); }
+body.light-theme .quiz-option:hover { background: #f0f6fd; border-color: #2c8fd9; box-shadow: 0 4px 16px rgba(44,143,217,.15); }
+body.light-theme .quiz-option.selected { background: linear-gradient(135deg, rgba(44,143,217,.12), #f0f8ff); color: #0a1830; border-color: #2c8fd9; box-shadow: 0 0 0 3px rgba(44,143,217,.12); }
+body.light-theme .quiz-actions .qbtn { background: #fff; color: #1a2942; border: 2px solid rgba(20,40,70,.15); font-weight: 700; }
+body.light-theme .quiz-actions .qbtn:hover { background: #f0f6fd; border-color: #2c8fd9; }
+body.light-theme .quiz-actions .qbtn[disabled] { opacity: .35; }
+body.light-theme .quiz-actions .qbtn.primary { background: linear-gradient(135deg, #2c8fd9, #1a6fb5); color: #fff; border-color: transparent; }
+body.light-theme .quiz-result-card { background: #fff; border: 2px solid rgba(44,143,217,.2); box-shadow: 0 2px 8px rgba(10,20,40,.06); }
 body.light-theme .quiz-result-card .qr-title { color: #0a1830; }
+body.light-theme .quiz-result-card .qr-price { color: #1a6fb5; }
+body.light-theme .quiz-result-card .qr-img { background: #f5f8fb; }
+body.light-theme .quiz-empty { color: #5a6878; }
+body.light-theme .quiz-progress span { background: rgba(20,40,70,.12); }
+body.light-theme .quiz-progress span.active { background: linear-gradient(90deg, #2c8fd9, #45b9ff); }
+body.light-theme .quiz-progress span.done { background: rgba(44,143,217,.35); }
+
+/* Light-theme: catalog items, price, specs, filters */
+body.light-theme .price {
+  background: #fff !important;
+  border-color: rgba(44,143,217,.2) !important;
+}
+body.light-theme .price small { color: #5a6878 !important; }
+body.light-theme .price strong { color: #1a2332 !important; -webkit-text-fill-color: #1a2332 !important; }
+body.light-theme .stock-note {
+  color: #1a2942 !important;
+  background: rgba(44,143,217,.06) !important;
+  border-color: rgba(44,143,217,.15) !important;
+}
+body.light-theme .specs li { color: #3a4d6c !important; border-color: rgba(10,20,40,.06) !important; }
+body.light-theme .specs li strong { color: #1a2332 !important; -webkit-text-fill-color: #1a2332 !important; }
+body.light-theme .gallery,
+body.light-theme .item .gallery,
+body.light-theme .gallery-stage {
+  background: #f5f8fb !important;
+  border-color: rgba(10,20,40,.08) !important;
+}
+body.light-theme .filter-card {
+  background: #fff !important;
+  border-color: rgba(10,20,40,.10) !important;
+}
+body.light-theme .filter-card label.title { color: #1a2942 !important; }
+body.light-theme .check { color: #1a2942 !important; }
+body.light-theme .filter-select {
+  background: #fff !important;
+  border-color: rgba(10,20,40,.15) !important;
+  color: #1a2332 !important;
+}
+body.light-theme .price-value { color: #1a2942 !important; }
+body.light-theme .filter-reset {
+  background: #fff !important;
+  border-color: rgba(10,20,40,.12) !important;
+  color: #1a2332 !important;
+}
+body.light-theme .filter-reset:hover { background: #f0f6fd !important; border-color: #2c8fd9 !important; }
+body.light-theme .item:hover { border-color: rgba(44,143,217,.3); box-shadow: 0 8px 30px rgba(10,20,40,.1); }
+
 
 /* --- FAQ --- */
 .faq-section {
