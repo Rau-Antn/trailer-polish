@@ -3489,6 +3489,12 @@ body.light-theme .search-wrap.is-open .search-toggle{
   transform:translateY(0);
   pointer-events:auto;
 }
+@media (max-width: 920px){
+  .search-popover{ width:min(420px, 60vw); min-width:260px; }
+}
+@media (max-width: 640px){
+  .search-popover{ width:calc(100vw - 96px); min-width:0; }
+}
 .search-results{
   max-height:calc(min(60vh, 460px) - 16px);
   overflow-y:auto;
