@@ -1129,7 +1129,7 @@ ${images}
         const data = Array.isArray(window.PRODUCTS_DATA) ? window.PRODUCTS_DATA.filter(p => p && p.active !== false) : [];
         const queryRaw = (q || '').trim();
         if (!queryRaw) {
-          results.innerHTML = '<div class="search-empty">Начните вводить название, тип или размер…</div>';
+          results.innerHTML = '';
           return;
         }
         const query = normalize(queryRaw);
