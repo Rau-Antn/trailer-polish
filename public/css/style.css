@@ -3573,7 +3573,7 @@ body.light-theme .search-close:hover{
   border-color:rgba(44,143,217,.45);
   color:#0d2235;
 }
-.search-popover{ padding-top:54px !important; }
+/* (legacy popover padding override removed — inline expanding search) */
 
 /* ============================================================
    Catalog Top: title + search + filter toggle (collapsible)
