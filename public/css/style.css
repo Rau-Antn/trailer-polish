@@ -3414,7 +3414,7 @@ body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
 
 /* Открытое состояние: кнопка-таблетка с инпутом */
 .search-wrap.is-open .search-toggle{
-  width:300px;
+  width:min(520px, 42vw);
   padding:0 6px 0 0;
   background:rgba(69,185,255,.12);
   border-color:rgba(69,185,255,.45);
