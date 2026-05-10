@@ -3319,14 +3319,19 @@ body.light-theme nav a.is-active{
 body.light-theme .ico, body.light-theme .contact-icon img.ico { color: #2c8fd9; }
 body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
 
-/* ===== Search button + popover (header) — см. ниже актуальные стили ===== */
-/* ===== Search button (pill-on-hover) ===== */
+/* ===== Search button (pill-on-click, expands inline) ===== */
+.search-wrap{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  flex-shrink:0;
+}
 .search-toggle{
   position:relative;
   height:40px;
   width:40px;
-  display:inline-flex; align-items:center; justify-content:center;
-  gap:8px;
+  display:inline-flex; align-items:center; justify-content:flex-start;
+  gap:6px;
   background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.10);
   border-radius:999px;
@@ -3335,17 +3340,17 @@ body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
   overflow:hidden;
   white-space:nowrap;
   color:#cfe6ff;
-  transition:width .35s cubic-bezier(.19,1,.22,1),
-             padding .35s cubic-bezier(.19,1,.22,1),
+  transition:width .38s cubic-bezier(.19,1,.22,1),
+             padding .38s cubic-bezier(.19,1,.22,1),
              background .25s ease, border-color .25s ease, box-shadow .25s ease;
   flex-shrink:0;
 }
 .search-toggle .search-icon-wrap{
   position:relative;
-  width:24px; height:24px;
-  flex:0 0 24px;
+  width:40px; height:40px;
+  flex:0 0 40px;
   display:inline-flex; align-items:center; justify-content:center;
-  transition:opacity .2s ease, width .35s cubic-bezier(.19,1,.22,1), flex-basis .35s cubic-bezier(.19,1,.22,1);
+  transition:opacity .2s ease;
 }
 .search-toggle .search-fallback{
   width:20px; height:20px;
@@ -3353,18 +3358,17 @@ body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
   color:inherit;
   transition:opacity .2s ease;
 }
-/* Lottie — большая область, перекрывающая всю кнопку при расширении */
 .search-toggle .search-lottie{
   position:absolute;
   top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
+  left:20px;
   width:40px;
   height:40px;
+  transform:translate(-50%,-50%);
   display:flex; align-items:center; justify-content:center;
   pointer-events:none;
   opacity:0;
-  transition:opacity .2s ease, width .35s cubic-bezier(.19,1,.22,1), height .35s cubic-bezier(.19,1,.22,1);
+  transition:opacity .2s ease;
 }
 .search-toggle .search-lottie svg,
 .search-toggle .search-lottie canvas{
@@ -3372,125 +3376,121 @@ body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
   height:100% !important;
   display:block;
 }
+.search-toggle .search-input{
+  flex:1 1 auto;
+  min-width:0;
+  width:0;
+  height:36px;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:inherit;
+  font-size:14px;
+  padding:0;
+  opacity:0;
+  pointer-events:none;
+  transition:width .38s cubic-bezier(.19,1,.22,1),
+             opacity .22s ease,
+             padding .38s cubic-bezier(.19,1,.22,1);
+}
+.search-toggle .search-input::placeholder{ color:rgba(207,230,255,.55); }
+.search-toggle .search-input::-webkit-search-cancel-button{ -webkit-appearance:none; appearance:none; }
 .search-toggle .btn-label{ display:none !important; }
-.search-toggle:active{ transform:scale(0.97); }
+.search-toggle:active{ transform:scale(0.98); }
 
+/* Hover: показываем Lottie вместо svg, кнопка остаётся круглой */
 @media (hover:hover) and (pointer:fine){
   .search-toggle:hover,
   .search-toggle:focus-visible{
-    width:240px;
-    padding:0 8px;
-    background:rgba(69,185,255,.12);
-    border-color:rgba(69,185,255,.45);
-    box-shadow:0 0 0 4px rgba(69,185,255,.08);
-  }
-  .search-toggle:hover .search-icon-wrap,
-  .search-toggle:focus-visible .search-icon-wrap{
-    opacity:0;
-    width:0; flex-basis:0;
+    background:rgba(69,185,255,.10);
+    border-color:rgba(69,185,255,.35);
+    box-shadow:0 0 0 4px rgba(69,185,255,.06);
   }
   .search-toggle:hover .search-lottie,
-  .search-toggle:focus-visible .search-lottie{
-    width:220px;
-    height:38px;
-  }
+  .search-toggle:focus-visible .search-lottie{ opacity:1; }
+  .search-toggle:hover .search-fallback,
+  .search-toggle:focus-visible .search-fallback{ opacity:0; }
 }
-.search-toggle[aria-expanded="true"]{
-  width:240px;
-  padding:0 8px;
+
+/* Открытое состояние: кнопка-таблетка с инпутом */
+.search-wrap.is-open .search-toggle{
+  width:300px;
+  padding:0 6px 0 0;
   background:rgba(69,185,255,.12);
   border-color:rgba(69,185,255,.45);
+  box-shadow:0 0 0 4px rgba(69,185,255,.08);
 }
-.search-toggle[aria-expanded="true"] .search-icon-wrap{ opacity:0; width:0; flex-basis:0; }
-.search-toggle[aria-expanded="true"] .search-lottie{ width:220px; height:38px; }
-
-/* Lottie показывается при hover/focus/open */
-.search-toggle:hover .search-lottie,
-.search-toggle:focus-visible .search-lottie,
-.search-toggle[aria-expanded="true"] .search-lottie{ opacity:1; }
-.search-toggle:hover .search-fallback,
-.search-toggle:focus-visible .search-fallback,
-.search-toggle[aria-expanded="true"] .search-fallback{ opacity:0; }
+.search-wrap.is-open .search-toggle .search-lottie{ opacity:1; }
+.search-wrap.is-open .search-toggle .search-fallback{ opacity:0; }
+.search-wrap.is-open .search-toggle .search-input{
+  width:100%;
+  opacity:1;
+  pointer-events:auto;
+  padding:0 10px 0 4px;
+}
 
 /* Если lottie не загрузился — всегда показываем SVG */
 .search-toggle.no-lottie .search-lottie{ display:none; }
 .search-toggle.no-lottie .search-fallback{ opacity:1 !important; }
 
+/* Светлая тема */
 body.light-theme .search-toggle{
-  background:rgba(0,0,0,.03);
-  border-color:rgba(0,0,0,.12);
-  color:#2c8fd9;
+  background:rgba(255,255,255,.85);
+  border-color:rgba(20,40,70,.15);
+  color:#1a2332;
 }
+body.light-theme .search-toggle .search-input{ color:#1a2332; }
+body.light-theme .search-toggle .search-input::placeholder{ color:rgba(26,35,50,.45); }
 @media (hover:hover) and (pointer:fine){
   body.light-theme .search-toggle:hover{
-    background:rgba(44,143,217,.10);
-    border-color:rgba(44,143,217,.50);
+    background:#fff;
+    border-color:rgba(44,143,217,.45);
     box-shadow:0 0 0 4px rgba(44,143,217,.08);
   }
 }
-
-/* На сенсорных устройствах кнопки всегда круглые без подписи */
-@media (hover:none), (pointer:coarse){
-  .search-toggle, .theme-toggle{
-    width:40px !important;
-    padding:0 !important;
-  }
-  .search-toggle .btn-label,
-  .theme-toggle .btn-label{ display:none !important; }
+body.light-theme .search-wrap.is-open .search-toggle{
+  background:#fff;
+  border-color:rgba(44,143,217,.55);
+  box-shadow:0 0 0 4px rgba(44,143,217,.10);
 }
 
-/* Full-width top search bar */
+/* Адаптив: на узких экранах поле уже */
+@media (max-width: 720px){
+  .search-wrap.is-open .search-toggle{ width:min(260px, calc(100vw - 120px)); }
+}
+
+/* Выпадающий список результатов под кнопкой */
 .search-popover{
-  position:fixed;
-  top:0; left:0; right:0;
-  width:100%;
-  background:rgba(8,14,24,.92);
-  border:0;
-  border-bottom:1px solid rgba(69,185,255,.22);
-  border-radius:0;
-  box-shadow:0 12px 40px -10px rgba(0,0,0,.55);
-  padding:18px max(20px, calc((100vw - 1100px) / 2)) 20px;
-  backdrop-filter:blur(18px) saturate(140%);
-  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  position:absolute;
+  top:calc(100% + 8px);
+  right:0;
+  width:min(360px, calc(100vw - 24px));
+  max-height:min(60vh, 460px);
+  overflow:hidden;
+  background:rgba(8,14,24,.96);
+  border:1px solid rgba(69,185,255,.22);
+  border-radius:14px;
+  box-shadow:0 18px 40px -12px rgba(0,0,0,.55);
+  backdrop-filter:blur(16px) saturate(140%);
+  -webkit-backdrop-filter:blur(16px) saturate(140%);
   z-index:1000;
   opacity:0;
-  transform:translateY(-12px);
+  transform:translateY(-6px);
   pointer-events:none;
   transition:opacity .22s ease, transform .22s ease;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
+  padding:8px;
 }
-.search-popover.is-open{
+.search-wrap.is-open .search-popover{
   opacity:1;
   transform:translateY(0);
   pointer-events:auto;
 }
-.search-popover input{
-  width:100%;
-  height:54px;
-  padding:0 18px;
-  border-radius:12px;
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.12);
-  color:#e8f1fb;
-  font-size:17px;
-  outline:none;
-  transition:border-color .2s ease, background .2s ease;
-}
-.search-popover input:focus{
-  border-color:rgba(69,185,255,.55);
-  background:rgba(69,185,255,.06);
-}
-.search-popover input::placeholder{ color:rgba(207,230,255,.45); }
-
 .search-results{
-  margin-top:0;
-  max-height:60vh;
+  max-height:calc(min(60vh, 460px) - 16px);
   overflow-y:auto;
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
-  gap:6px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
 }
 .search-results a{
   display:flex; align-items:center; gap:10px;
@@ -3527,17 +3527,7 @@ body.light-theme .search-toggle{
 body.light-theme .search-popover{
   background:rgba(255,255,255,.98);
   border-color:rgba(44,143,217,.25);
-  box-shadow:0 20px 60px -20px rgba(0,0,0,.18);
-}
-body.light-theme .search-popover input{
-  background:rgba(0,0,0,.03);
-  border-color:rgba(0,0,0,.10);
-  color:#1a2332;
-}
-body.light-theme .search-popover input::placeholder{ color:rgba(26,35,50,.45); }
-body.light-theme .search-popover input:focus{
-  border-color:rgba(44,143,217,.55);
-  background:rgba(44,143,217,.05);
+  box-shadow:0 18px 40px -12px rgba(10,20,40,.18);
 }
 body.light-theme .search-results a{ color:#2c4356; }
 body.light-theme .search-results a:hover,
@@ -3550,14 +3540,7 @@ body.light-theme .search-results .sr-title strong{ color:#1a2332; }
 body.light-theme .search-results .sr-title small{ color:rgba(26,35,50,.55); }
 body.light-theme .search-empty{ color:rgba(26,35,50,.55); }
 
-/* Make logo-wrap relative so popover positions to header-inner instead */
 .header-inner{ position:relative; }
-
-@media (max-width: 720px){
-  .search-popover{
-    padding:14px 14px 16px;
-  }
-  .search-popover input{ height:48px; font-size:16px; }
   .search-results{ grid-template-columns:1fr; max-height:65vh; }
 }
 
@@ -3590,7 +3573,7 @@ body.light-theme .search-close:hover{
   border-color:rgba(44,143,217,.45);
   color:#0d2235;
 }
-.search-popover{ padding-top:54px !important; }
+/* (legacy popover padding override removed — inline expanding search) */
 
 /* ============================================================
    Catalog Top: title + search + filter toggle (collapsible)

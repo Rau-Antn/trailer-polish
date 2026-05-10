@@ -949,7 +949,11 @@ ${images}
 
   const initHeaderSearch = () => {
     document.querySelectorAll('header .header-inner').forEach(inner => {
-      if (inner.querySelector('.search-toggle')) return;
+      if (inner.querySelector('.search-wrap')) return;
+
+      // Wrapper holds the button (which expands inline) + a dropdown for results.
+      const wrap = document.createElement('div');
+      wrap.className = 'search-wrap';
 
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -962,7 +966,10 @@ ${images}
         + '<circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'
         + '</span>'
         + '<span class="search-lottie" aria-hidden="true"></span>'
+        + '<input type="search" inputmode="search" maxlength="80" class="search-input" placeholder="Поиск по названию прицепа…" aria-label="Поиск по товарам" tabindex="-1"/>'
         + '<span class="btn-label">Поиск</span>';
+
+      wrap.appendChild(btn);
 
       // Вставляем в общий ряд кнопок над меню (перед .theme-toggle)
       let row = inner.querySelector('.header-actions-row');
@@ -972,19 +979,17 @@ ${images}
         inner.insertBefore(row, inner.firstChild);
       }
       const themeBtn = row.querySelector('.theme-toggle');
-      if (themeBtn) row.insertBefore(btn, themeBtn);
-      else row.appendChild(btn);
+      if (themeBtn) row.insertBefore(wrap, themeBtn);
+      else row.appendChild(wrap);
 
       const pop = document.createElement('div');
       pop.className = 'search-popover';
       pop.setAttribute('role', 'dialog');
       pop.setAttribute('aria-label', 'Поиск товаров');
-      pop.innerHTML = '<button type="button" class="search-close" aria-label="Закрыть поиск">×</button>'
-        + '<input type="search" inputmode="search" maxlength="80" placeholder="Поиск по названию прицепа…" aria-label="Поиск по товарам"/>'
-        + '<div class="search-results" role="listbox"></div>';
-      document.body.appendChild(pop);
+      pop.innerHTML = '<div class="search-results" role="listbox"></div>';
+      wrap.appendChild(pop);
 
-      const input = pop.querySelector('input');
+      const input = btn.querySelector('.search-input');
       const results = pop.querySelector('.search-results');
       let lottieAnim = null;
 
@@ -1161,26 +1166,36 @@ ${images}
       };
 
       const open = () => {
-        if (pop.classList.contains('is-open')) return;
-        pop.classList.add('is-open');
+        if (wrap.classList.contains('is-open')) return;
+        wrap.classList.add('is-open');
         btn.setAttribute('aria-expanded', 'true');
+        input.removeAttribute('tabindex');
         renderResults(input.value);
         if (lottieAnim) { try { lottieAnim.goToAndPlay(0, true); } catch (e) {} }
-        setTimeout(() => input.focus(), 50);
+        setTimeout(() => input.focus(), 60);
       };
       const close = () => {
-        if (!pop.classList.contains('is-open')) return;
-        pop.classList.remove('is-open');
+        if (!wrap.classList.contains('is-open')) return;
+        wrap.classList.remove('is-open');
         btn.setAttribute('aria-expanded', 'false');
+        input.setAttribute('tabindex', '-1');
+        input.blur();
         if (lottieAnim) { try { lottieAnim.stop(); } catch (e) {} }
       };
 
       btn.addEventListener('click', (e) => {
+        // Клик по самому инпуту не должен закрывать
+        if (e.target === input) return;
         e.stopPropagation();
-        if (pop.classList.contains('is-open')) close(); else open();
+        if (wrap.classList.contains('is-open')) {
+          // если поле пустое — сворачиваем; иначе фокусим инпут
+          if (!input.value.trim()) close();
+          else input.focus();
+        } else {
+          open();
+        }
       });
-      const closeBtn = pop.querySelector('.search-close');
-      if (closeBtn) closeBtn.addEventListener('click', (e) => { e.stopPropagation(); close(); });
+      input.addEventListener('click', (e) => e.stopPropagation());
       input.addEventListener('input', (e) => renderResults(e.target.value));
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') { close(); btn.focus(); }
@@ -1191,7 +1206,9 @@ ${images}
       });
       pop.addEventListener('click', (e) => e.stopPropagation());
       document.addEventListener('click', (e) => {
-        if (!pop.contains(e.target) && !btn.contains(e.target)) close();
+        if (!wrap.contains(e.target)) {
+          if (!input.value.trim()) close();
+        }
       });
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') close();
