@@ -949,7 +949,11 @@ ${images}
 
   const initHeaderSearch = () => {
     document.querySelectorAll('header .header-inner').forEach(inner => {
-      if (inner.querySelector('.search-toggle')) return;
+      if (inner.querySelector('.search-wrap')) return;
+
+      // Wrapper holds the button (which expands inline) + a dropdown for results.
+      const wrap = document.createElement('div');
+      wrap.className = 'search-wrap';
 
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -962,7 +966,10 @@ ${images}
         + '<circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'
         + '</span>'
         + '<span class="search-lottie" aria-hidden="true"></span>'
+        + '<input type="search" inputmode="search" maxlength="80" class="search-input" placeholder="Поиск по названию прицепа…" aria-label="Поиск по товарам" tabindex="-1"/>'
         + '<span class="btn-label">Поиск</span>';
+
+      wrap.appendChild(btn);
 
       // Вставляем в общий ряд кнопок над меню (перед .theme-toggle)
       let row = inner.querySelector('.header-actions-row');
@@ -972,19 +979,17 @@ ${images}
         inner.insertBefore(row, inner.firstChild);
       }
       const themeBtn = row.querySelector('.theme-toggle');
-      if (themeBtn) row.insertBefore(btn, themeBtn);
-      else row.appendChild(btn);
+      if (themeBtn) row.insertBefore(wrap, themeBtn);
+      else row.appendChild(wrap);
 
       const pop = document.createElement('div');
       pop.className = 'search-popover';
       pop.setAttribute('role', 'dialog');
       pop.setAttribute('aria-label', 'Поиск товаров');
-      pop.innerHTML = '<button type="button" class="search-close" aria-label="Закрыть поиск">×</button>'
-        + '<input type="search" inputmode="search" maxlength="80" placeholder="Поиск по названию прицепа…" aria-label="Поиск по товарам"/>'
-        + '<div class="search-results" role="listbox"></div>';
-      document.body.appendChild(pop);
+      pop.innerHTML = '<div class="search-results" role="listbox"></div>';
+      wrap.appendChild(pop);
 
-      const input = pop.querySelector('input');
+      const input = btn.querySelector('.search-input');
       const results = pop.querySelector('.search-results');
       let lottieAnim = null;
 
