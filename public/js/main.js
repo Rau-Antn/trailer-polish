@@ -1166,26 +1166,36 @@ ${images}
       };
 
       const open = () => {
-        if (pop.classList.contains('is-open')) return;
-        pop.classList.add('is-open');
+        if (wrap.classList.contains('is-open')) return;
+        wrap.classList.add('is-open');
         btn.setAttribute('aria-expanded', 'true');
+        input.removeAttribute('tabindex');
         renderResults(input.value);
         if (lottieAnim) { try { lottieAnim.goToAndPlay(0, true); } catch (e) {} }
-        setTimeout(() => input.focus(), 50);
+        setTimeout(() => input.focus(), 60);
       };
       const close = () => {
-        if (!pop.classList.contains('is-open')) return;
-        pop.classList.remove('is-open');
+        if (!wrap.classList.contains('is-open')) return;
+        wrap.classList.remove('is-open');
         btn.setAttribute('aria-expanded', 'false');
+        input.setAttribute('tabindex', '-1');
+        input.blur();
         if (lottieAnim) { try { lottieAnim.stop(); } catch (e) {} }
       };
 
       btn.addEventListener('click', (e) => {
+        // Клик по самому инпуту не должен закрывать
+        if (e.target === input) return;
         e.stopPropagation();
-        if (pop.classList.contains('is-open')) close(); else open();
+        if (wrap.classList.contains('is-open')) {
+          // если поле пустое — сворачиваем; иначе фокусим инпут
+          if (!input.value.trim()) close();
+          else input.focus();
+        } else {
+          open();
+        }
       });
-      const closeBtn = pop.querySelector('.search-close');
-      if (closeBtn) closeBtn.addEventListener('click', (e) => { e.stopPropagation(); close(); });
+      input.addEventListener('click', (e) => e.stopPropagation());
       input.addEventListener('input', (e) => renderResults(e.target.value));
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') { close(); btn.focus(); }
@@ -1196,7 +1206,9 @@ ${images}
       });
       pop.addEventListener('click', (e) => e.stopPropagation());
       document.addEventListener('click', (e) => {
-        if (!pop.contains(e.target) && !btn.contains(e.target)) close();
+        if (!wrap.contains(e.target)) {
+          if (!input.value.trim()) close();
+        }
       });
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') close();
