@@ -1139,7 +1139,7 @@ ${images}
 
         const totalCriteria = tokens.length + numbers.length;
         if (!totalCriteria) {
-          results.innerHTML = '<div class="search-empty">Уточните запрос…</div>';
+          results.innerHTML = '';
           return;
         }
 
