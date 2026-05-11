@@ -1164,7 +1164,8 @@ ${images}
         btn.setAttribute('aria-expanded', 'true');
         input.removeAttribute('tabindex');
         renderResults(input.value);
-        if (lottieAnim) { try { lottieAnim.goToAndPlay(0, true); } catch (e) {} }
+        // В открытом режиме Lottie скрыта — останавливаем
+        if (lottieAnim) { try { lottieAnim.stop(); } catch (e) {} }
         setTimeout(() => input.focus(), 60);
       };
       const close = () => {
