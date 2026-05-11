@@ -1003,6 +1003,10 @@ ${images}
             loop: true,
             autoplay: false,
             path: '/lottie/search.json',
+            rendererSettings: {
+              preserveAspectRatio: 'none',
+              progressiveLoad: false,
+            },
           });
           // Анимация только в hover-превью; в открытом (is-open) состоянии останавливаем
           btn.addEventListener('mouseenter', () => {
