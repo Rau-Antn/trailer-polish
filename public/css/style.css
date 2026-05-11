@@ -3398,31 +3398,37 @@ body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
 .search-toggle .btn-label{ display:none !important; }
 .search-toggle:active{ transform:scale(0.98); }
 
-/* Раскрытое состояние — общее для hover, focus и .is-open */
-.search-wrap:hover .search-toggle,
-.search-wrap:focus-within .search-toggle,
-.search-wrap.is-open .search-toggle{
+/* Hover-превью: pill раскрыт, Lottie на всю ширину, инпут СКРЫТ (нет старого текста) */
+.search-wrap:hover .search-toggle{
   width:min(320px, 40vw);
   background:rgba(69,185,255,.12);
   border-color:rgba(69,185,255,.45);
   box-shadow:0 0 0 4px rgba(69,185,255,.08);
 }
-.search-wrap:hover .search-lottie,
-.search-wrap:focus-within .search-lottie,
-.search-wrap.is-open .search-lottie{ opacity:1; }
-.search-wrap:hover .search-fallback,
-.search-wrap:focus-within .search-fallback,
-.search-wrap.is-open .search-fallback{ opacity:0; }
-.search-wrap:hover .search-input,
-.search-wrap:focus-within .search-input,
-.search-wrap.is-open .search-input{
+.search-wrap:hover .search-lottie{ opacity:1; }
+.search-wrap:hover .search-fallback{ opacity:0; }
+
+/* Открытое состояние (клик / фокус / .is-open): инпут виден, Lottie скрыта */
+.search-wrap.is-open .search-toggle,
+.search-wrap:focus-within .search-toggle{
+  width:min(320px, 40vw);
+  background:rgba(69,185,255,.12);
+  border-color:rgba(69,185,255,.45);
+  box-shadow:0 0 0 4px rgba(69,185,255,.08);
+}
+.search-wrap.is-open .search-lottie,
+.search-wrap:focus-within .search-lottie{ opacity:0; }
+.search-wrap.is-open .search-fallback,
+.search-wrap:focus-within .search-fallback{ opacity:0; }
+.search-wrap.is-open .search-input,
+.search-wrap:focus-within .search-input{
   width:100%;
   opacity:1;
   pointer-events:auto;
-  padding:0 14px 0 44px; /* отступ слева, чтобы текст не наезжал на лупу Lottie */
+  padding:0 14px 0 16px;
 }
 
-/* Тач-устройства: только по is-open, без hover */
+/* Тач-устройства: hover не должен раскрывать */
 @media (hover:none){
   .search-wrap:hover .search-toggle{
     width:40px;
@@ -3432,9 +3438,6 @@ body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
   }
   .search-wrap:hover .search-lottie{ opacity:0; }
   .search-wrap:hover .search-fallback{ opacity:1; }
-  .search-wrap:hover .search-input{
-    width:0; opacity:0; pointer-events:none; padding:0;
-  }
 }
 
 /* Если lottie не загрузился — всегда показываем SVG */
