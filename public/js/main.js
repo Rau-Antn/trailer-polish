@@ -1004,20 +1004,13 @@ ${images}
             autoplay: false,
             path: '/lottie/search.json',
           });
-          // Анимация при наведении
+          // Анимация только в hover-превью; в открытом (is-open) состоянии останавливаем
           btn.addEventListener('mouseenter', () => {
+            if (wrap.classList.contains('is-open')) return;
             try { lottieAnim.goToAndPlay(0, true); } catch (e) {}
           });
           btn.addEventListener('mouseleave', () => {
-            if (!pop.classList.contains('is-open')) {
-              try { lottieAnim.stop(); } catch (e) {}
-            }
-          });
-          btn.addEventListener('focus', () => {
-            try { lottieAnim.goToAndPlay(0, true); } catch (e) {}
-          });
-          btn.addEventListener('blur', () => {
-            if (!pop.classList.contains('is-open')) {
+            if (!wrap.classList.contains('is-open')) {
               try { lottieAnim.stop(); } catch (e) {}
             }
           });
