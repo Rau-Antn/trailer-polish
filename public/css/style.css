@@ -3319,7 +3319,7 @@ body.light-theme nav a.is-active{
 body.light-theme .ico, body.light-theme .contact-icon img.ico { color: #2c8fd9; }
 body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
 
-/* ===== Search button (pill-on-click, expands inline) ===== */
+/* ===== Search: единое pill-окно с Lottie на всю площадь ===== */
 .search-wrap{
   position:relative;
   display:inline-flex;
@@ -3331,7 +3331,6 @@ body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
   height:40px;
   width:40px;
   display:inline-flex; align-items:center; justify-content:flex-start;
-  gap:6px;
   background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.10);
   border-radius:999px;
@@ -3341,33 +3340,32 @@ body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
   white-space:nowrap;
   color:#cfe6ff;
   transition:width .38s cubic-bezier(.19,1,.22,1),
-             padding .38s cubic-bezier(.19,1,.22,1),
              background .25s ease, border-color .25s ease, box-shadow .25s ease;
   flex-shrink:0;
 }
+/* Иконка-фолбэк: видна только в свёрнутом виде */
 .search-toggle .search-icon-wrap{
-  position:relative;
-  width:40px; height:40px;
-  flex:0 0 40px;
-  display:inline-flex; align-items:center; justify-content:center;
+  position:absolute;
+  inset:0;
+  display:flex; align-items:center; justify-content:center;
+  pointer-events:none;
+  z-index:1;
   transition:opacity .2s ease;
 }
 .search-toggle .search-fallback{
   width:20px; height:20px;
   display:block;
   color:inherit;
-  transition:opacity .2s ease;
 }
+/* Lottie занимает всю площадь pill — единое целое */
 .search-toggle .search-lottie{
   position:absolute;
-  top:0;
-  left:0;
-  width:40px;
-  height:40px;
+  inset:0;
   display:flex; align-items:center; justify-content:center;
   pointer-events:none;
   opacity:0;
-  transition:opacity .2s ease;
+  z-index:2;
+  transition:opacity .25s ease;
 }
 .search-toggle .search-lottie svg,
 .search-toggle .search-lottie canvas{
@@ -3375,7 +3373,10 @@ body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
   height:100% !important;
   display:block;
 }
+/* Инпут поверх Lottie, прозрачный — Lottie виден сквозь */
 .search-toggle .search-input{
+  position:relative;
+  z-index:3;
   flex:1 1 auto;
   min-width:0;
   width:0;
@@ -3397,49 +3398,43 @@ body.light-theme .faq-item summary::after { background-color: #2c8fd9; }
 .search-toggle .btn-label{ display:none !important; }
 .search-toggle:active{ transform:scale(0.98); }
 
-/* Hover: показываем Lottie вместо svg + раскрываем поле */
-@media (hover:hover) and (pointer:fine){
-  .search-toggle:focus-visible{
-    background:rgba(69,185,255,.10);
-    border-color:rgba(69,185,255,.35);
-    box-shadow:0 0 0 4px rgba(69,185,255,.06);
-  }
-  .search-wrap:hover .search-lottie,
-  .search-toggle:focus-visible .search-lottie{ opacity:1; }
-  .search-wrap:hover .search-fallback,
-  .search-toggle:focus-visible .search-fallback{ opacity:0; }
-}
-
-/* Открытое состояние: кнопка-таблетка с инпутом (по hover и по is-open) */
-@media (hover:hover) and (pointer:fine){
-  .search-wrap:hover .search-toggle{
-    width:min(320px, 38vw);
-    padding:0 6px 0 0;
-    background:rgba(69,185,255,.12);
-    border-color:rgba(69,185,255,.45);
-    box-shadow:0 0 0 4px rgba(69,185,255,.08);
-  }
-  .search-wrap:hover .search-toggle .search-input{
-    width:100%;
-    opacity:1;
-    pointer-events:auto;
-    padding:0 10px 0 4px;
-  }
-}
+/* Раскрытое состояние — общее для hover, focus и .is-open */
+.search-wrap:hover .search-toggle,
+.search-wrap:focus-within .search-toggle,
 .search-wrap.is-open .search-toggle{
-  width:min(320px, 38vw);
-  padding:0 6px 0 0;
+  width:min(320px, 40vw);
   background:rgba(69,185,255,.12);
   border-color:rgba(69,185,255,.45);
   box-shadow:0 0 0 4px rgba(69,185,255,.08);
 }
-.search-wrap.is-open .search-toggle .search-lottie{ opacity:1; }
-.search-wrap.is-open .search-toggle .search-fallback{ opacity:0; }
-.search-wrap.is-open .search-toggle .search-input{
+.search-wrap:hover .search-lottie,
+.search-wrap:focus-within .search-lottie,
+.search-wrap.is-open .search-lottie{ opacity:1; }
+.search-wrap:hover .search-fallback,
+.search-wrap:focus-within .search-fallback,
+.search-wrap.is-open .search-fallback{ opacity:0; }
+.search-wrap:hover .search-input,
+.search-wrap:focus-within .search-input,
+.search-wrap.is-open .search-input{
   width:100%;
   opacity:1;
   pointer-events:auto;
-  padding:0 10px 0 4px;
+  padding:0 14px 0 44px; /* отступ слева, чтобы текст не наезжал на лупу Lottie */
+}
+
+/* Тач-устройства: только по is-open, без hover */
+@media (hover:none){
+  .search-wrap:hover .search-toggle{
+    width:40px;
+    background:rgba(255,255,255,.04);
+    border-color:rgba(255,255,255,.10);
+    box-shadow:none;
+  }
+  .search-wrap:hover .search-lottie{ opacity:0; }
+  .search-wrap:hover .search-fallback{ opacity:1; }
+  .search-wrap:hover .search-input{
+    width:0; opacity:0; pointer-events:none; padding:0;
+  }
 }
 
 /* Если lottie не загрузился — всегда показываем SVG */
@@ -3454,24 +3449,23 @@ body.light-theme .search-toggle{
 }
 body.light-theme .search-toggle .search-input{ color:#1a2332; }
 body.light-theme .search-toggle .search-input::placeholder{ color:rgba(26,35,50,.45); }
-@media (hover:hover) and (pointer:fine){
-  body.light-theme .search-toggle:hover{
-    background:#fff;
-    border-color:rgba(44,143,217,.45);
-    box-shadow:0 0 0 4px rgba(44,143,217,.08);
-  }
-}
+body.light-theme .search-wrap:hover .search-toggle,
+body.light-theme .search-wrap:focus-within .search-toggle,
 body.light-theme .search-wrap.is-open .search-toggle{
   background:#fff;
   border-color:rgba(44,143,217,.55);
   box-shadow:0 0 0 4px rgba(44,143,217,.10);
 }
 
-/* Адаптив: на узких экранах поле уже */
+/* Адаптив */
 @media (max-width: 920px){
-  .search-wrap.is-open .search-toggle{ width:min(280px, 50vw); }
+  .search-wrap:hover .search-toggle,
+  .search-wrap:focus-within .search-toggle,
+  .search-wrap.is-open .search-toggle{ width:min(280px, 52vw); }
 }
 @media (max-width: 640px){
+  .search-wrap:hover .search-toggle,
+  .search-wrap:focus-within .search-toggle,
   .search-wrap.is-open .search-toggle{ width:calc(100vw - 96px); }
 }
 
